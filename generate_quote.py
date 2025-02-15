@@ -1,16 +1,16 @@
+import google.generativeai as genai
 import os
-from google.generativeai import Client
 
-# The GOOGLE_APPLICATION_CREDENTIALS environment variable is automatically set by the GitHub Action
-# client = Client()  # No need to explicitly pass credentials if the env var is set
+# Retrieve the API Key from the environment
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
-# It is better to create the client with the credentials file path
-credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-client = Client(credentials_file=credentials_path)
+# Configure the Google Generative AI model
+genai.configure(api_key=GOOGLE_API_KEY)
 
-response = client.generate_text(
-    model="text-bison-001",  # Replace with your desired model
-    prompt="Generate me one inspiring, wise, and heart-touching quote from a famous person that motivates and brings hope to others."
-)
+# Generate the quote using Gemini 2.0 model
+model = genai.GenerativeModel('models/gemini-2.0-flash')
+response = model.generate_content('Generate me one inspiring, wise, and heart-touching quote from a famous person that motivates and brings hope to others.')
 
-print(response.result)
+# Extract and print the quote
+quote = response.text.split(' - ')[0]
+print(quote)
