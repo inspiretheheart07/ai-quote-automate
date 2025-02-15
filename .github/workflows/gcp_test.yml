@@ -3,7 +3,8 @@ name: Download Files from Google Drive
 on:
   push:
     branches:
-      - main
+      - development
+
 
 jobs:
   download-files:
@@ -24,7 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install google-api-python-client
           pip install google-auth-httplib2
-          pip install google-auth-oauthlib # Install your dependencies
+          pip install google-auth-oauthlib 
 
       - name: Set up Google service account credentials
         run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT }}" > service_account_base64.txt
