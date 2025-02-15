@@ -58,11 +58,7 @@ jobs:
             pip install google-auth-httplib2
             pip install google-auth-oauthlib
             pip list  
-      - name: Debug Authentication Output
-        run: |
-          echo "Access Token:"
-          gcloud auth print-access-token
-
+            
       - name: Create Image Using Bg
         env:
           GCP_API_KEY: ${{ secrets.GOOGLE_API_KEY_DRIVE }}  # Pass secret to script
