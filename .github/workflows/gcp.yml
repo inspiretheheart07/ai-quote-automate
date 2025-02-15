@@ -34,9 +34,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade google-generativeai
 
-      - name: Run generative AI script
-        env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      # - name: Run generative AI script
+      #   env:
+      #     GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         # run: |
         #   python generate_quote.py
 
