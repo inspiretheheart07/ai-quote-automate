@@ -4,11 +4,11 @@ import random
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
 from PIL import Image, ImageDraw, ImageFont, ImageFilter  # For adding text to the image
 
 # Define the OAuth 2.0 scopes (Read-only access to Google Drive)
-SCOPES = ['https://www.googleapis.com/auth/drive.file']  # Use drive.file scope to upload files
+SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
 # Files to download from Google Drive (with random number in the filename)
 random_number = random.randint(1, 11)  # Generate a random number between 1 and 11
@@ -36,22 +36,6 @@ def download_files():
 
     # Build the Drive API service
     drive_service = build('drive', 'v3', credentials=creds)
-
-    #print all once before iterate
-    try:
-        # Perform a broad file listing to see what files are available
-        results1 = drive_service.files().list(fields="files(id, name)").execute()
-        items1 = results1.get('files', [])
-        
-        if not items1:
-            print('No files found in the Drive.')
-        else:
-            print('Files found in the Drive:')
-            for item in items1:
-                print(f'{item["name"]} (ID: {item["id"]})')    
-    except Exception as e:
-        print(f"Error listing files: {e}")
-
 
     for filename in files_to_download:
         try:
@@ -85,8 +69,8 @@ def download_files():
                     font_path = 'path_to_your_font.ttf'  # Path to the font file (ensure the font is available)
                     output_image_path = f"output_{filename}"
 
-                    # Call the function to add text to the background image and upload to Drive
-                    upload_to_drive(text_on_background(text, filename, font_path, output_image_path), drive_service)
+                    # Call the function to add text to the background image
+                    text_on_background(text, filename, font_path, output_image_path)
 
         except Exception as e:
             print(f'An error occurred while downloading {filename}: {e}')
@@ -208,33 +192,11 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     # Apply sharpening filter to the image after drawing text
     sharpened_image = cropped_image.filter(ImageFilter.SHARPEN)
 
-    # Save the resulting image locally before uploading
+    # Save the resulting image
     sharpened_image.save(output_image_path)
+
     print(f"Image saved at: {output_image_path}")
-
     return output_image_path
-
-# Function to upload the image back to Google Drive
-def upload_to_drive(image_path, drive_service):
-    # Create a MediaFileUpload object for the image
-    media = MediaFileUpload(image_path, mimetype='image/png')
-
-    # Create a file metadata
-    file_metadata = {
-        'name': os.path.basename(image_path),  # File name on Google Drive
-        'parents': []  # You can specify folder IDs if needed, leave empty for root directory
-    }
-
-    # Upload the file to Google Drive
-    try:
-        file = drive_service.files().create(
-            media_body=media,
-            body=file_metadata
-        ).execute()
-
-        print(f"File uploaded successfully: {file['name']} (ID: {file['id']})")
-    except Exception as e:
-        print(f"An error occurred while uploading the file: {e}")
 
 # Run the function to download files from Google Drive
 if __name__ == '__main__':
