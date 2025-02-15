@@ -1,38 +1,43 @@
-name: Google Drive Files List
+name: Download Files from Google Drive
 
 on:
   push:
     branches:
-      - development
+      - main
 
 jobs:
-  list_files:
+  download-files:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install google-api-python-client
-        pip install google-auth-httplib2
-        pip install google-auth-oauthlib # Install your dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip
+          pip install google-api-python-client
+          pip install google-auth-httplib2
+          pip install google-auth-oauthlib # Install your dependencies
 
-    - name: Upload token.pickle as a GitHub secret
-      uses: actions/upload-artifact@v4
-      with:
-        name: token-pickle
-        path: token.pickle
+      - name: Set up Google service account credentials
+        run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT }}" > service_account_base64.txt
 
-    - name: Run Python script to list files from Google Drive
-      env:
-        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}  # Your credentials JSON stored in GitHub Secrets
-      run: |
-        python drive_check.py
+      - name: Run Python script to download files
+        run: |
+          python drive_check.py
+
+      - name: Upload downloaded files as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: downloaded-files
+          path: |
+            bg.png
+            font.ttf
+            *.mp3
