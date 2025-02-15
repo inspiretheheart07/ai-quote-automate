@@ -28,17 +28,23 @@ jobs:
           pip install google-auth-oauthlib 
 
       - name: Set up Google service account credentials
-        run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT }}" > service_account_base64.txt
-
-      - name: Run Python script to download files
         run: |
-          python drive_check.py
-
+            # Decode the Base64-encoded service account credentials stored in GitHub Secrets
+            echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT }}" | base64 --decode > service_account.json
+          # This step will decode the Base64 secret and store it in service_account.json
+  
+      - name: Run Python script to download files
+        env:
+          GOOGLE_SERVICE_ACCOUNT_PATH: ${{ github.workspace }}/service_account.json
+        run: |
+            python drive_check.py
+  
       - name: Upload downloaded files as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: downloaded-files
           path: |
-            bg.png
-            font.ttf
-            *.mp3
+              bg.png
+              font.ttf
+              *.mp3
+  
