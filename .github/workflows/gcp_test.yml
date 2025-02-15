@@ -3,7 +3,7 @@ name: Google Drive Files List
 on:
   push:
     branches:
-      - development  # Change this to the branch you want to trigger on
+      - development
 
 jobs:
   list_files:
@@ -16,17 +16,21 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'  # or whichever version you need
+        python-version: '3.9'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install google-api-python-client
-        pip install google-auth-httplib2
-        pip install google-auth-oauthlib 
+        pip install -r requirements.txt  # Install your dependencies
+
+    - name: Upload token.pickle as a GitHub secret
+      uses: actions/upload-artifact@v2
+      with:
+        name: token-pickle
+        path: token.pickle
 
     - name: Run Python script to list files from Google Drive
       env:
-        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}  # Load secret from GitHub Secrets
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}  # Your credentials JSON stored in GitHub Secrets
       run: |
-        python drive_check.py  # Your Python script that will list the files
+        python drive_check.py

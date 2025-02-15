@@ -22,7 +22,7 @@ def authenticate():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            # Load credentials from the environment variable
+            # Load credentials from the environment variable (this should be your `credentials.json`)
             credentials_json = os.getenv('GOOGLE_CREDENTIALS')
             if not credentials_json:
                 raise ValueError("Environment variable GOOGLE_CREDENTIALS is not set.")
@@ -30,13 +30,11 @@ def authenticate():
             # Parse the JSON string from the environment variable
             credentials_data = json.loads(credentials_json)
 
-            # Use the loaded credentials to authenticate
-            creds = Credentials.from_authorized_user_info(info=credentials_data, scopes=SCOPES)
+            # Initialize the flow for the first-time authentication
+            flow = InstalledAppFlow.from_client_config(credentials_data, SCOPES)
 
-            # If the credentials are missing a refresh_token (first-time authorization), trigger the flow
-            if not creds.refresh_token:
-                flow = InstalledAppFlow.from_client_config(credentials_data, SCOPES)
-                creds = flow.run_local_server(port=0)  # This will open a browser window for authentication
+            # Run the local server to authenticate the user and get the refresh token
+            creds = flow.run_local_server(port=0)
 
         # Save the credentials to token.pickle for future use
         with open('token.pickle', 'wb') as token:
