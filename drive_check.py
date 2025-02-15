@@ -1,10 +1,9 @@
 import os
 import json
 import pickle
-import random
+import base64
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 
@@ -14,7 +13,7 @@ SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 # Files to download from Google Drive (specify names or pattern)
 files_to_download = ['bg.png', 'font.ttf', f'{random.randint(1, 11)}.mp3']
 
-# Function to authenticate the user and load credentials from the environment variable
+# Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
     creds = None
     # Check if the token.pickle file exists for storing credentials
@@ -27,19 +26,16 @@ def authenticate():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            # Load credentials from the environment variable (this should be your `credentials.json`)
-            credentials_json = os.getenv('GOOGLE_CREDENTIALS')
-            if not credentials_json:
-                raise ValueError("Environment variable GOOGLE_CREDENTIALS is not set.")
+            # Load service account credentials from the environment variable (this should be your base64-encoded `credentials.json`)
+            encoded_credentials = os.getenv('GOOGLE_SERVICE_ACCOUNT')
+            if not encoded_credentials:
+                raise ValueError("Environment variable GOOGLE_SERVICE_ACCOUNT is not set.")
             
-            # Parse the JSON string from the environment variable
-            credentials_data = json.loads(credentials_json)
+            # Decode the base64-encoded string to get the original credentials JSON
+            credentials_data = json.loads(base64.b64decode(encoded_credentials).decode('utf-8'))
 
-            # Initialize the flow for the first-time authentication
-            flow = InstalledAppFlow.from_client_config(credentials_data, SCOPES)
-
-            # Run the local server to authenticate the user and get the refresh token
-            creds = flow.run_local_server(port=0)
+            # Use service account credentials to authenticate
+            creds = service_account.Credentials.from_service_account_info(credentials_data, scopes=SCOPES)
 
         # Save the credentials to token.pickle for future use
         with open('token.pickle', 'wb') as token:
