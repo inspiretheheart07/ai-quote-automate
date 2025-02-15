@@ -3,7 +3,7 @@ import random
 import tempfile
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from moviepy.editor import *  # for video creation
+from moviepy import *  # for video creation
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 
