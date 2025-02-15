@@ -5,7 +5,7 @@ from google.auth import credentials
 from google.auth import impersonated_credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from moviepy.editor import *  # for video creation
+from moviepy import *  # for video creation
 from PIL import Image, ImageDraw, ImageFont
 from google.auth import identity
 
