@@ -62,5 +62,8 @@ jobs:
       - name: Create Image Using Bg
         env:
           GCP_API_KEY: ${{ secrets.GOOGLE_API_KEY_DRIVE }}  # Pass secret to script
+          GOOGLE_CLOUD_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}  # Pass secret to script
+          WORKLOAD_IDENTITY_POOL_ID: ${{ secrets.GCP_WORKLOAD_IDENTITY_POOL }}  # Pass secret to script
+          WORKLOAD_IDENTITY_PROVIDER_ID: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}  # Pass secret to script
         run: |
           python create_image_video.py 

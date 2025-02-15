@@ -114,7 +114,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     return output_image_path
 
 # Example usage:
-file_id = 'YOUR_FILE_ID_FROM_GOOGLE_DRIVE'  # Replace with the actual Google Drive file ID
+file_id = '1mUohoXSVJPlrF4U0TUxztOnBo2saoTZv'  # Replace with the actual Google Drive file ID
 destination_path = 'downloaded_image.png'  # Local path to save the downloaded image
 
 # Download the image from Google Drive
