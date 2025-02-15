@@ -7,7 +7,7 @@ SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 def authenticate():
     creds = None
     # Load service account credentials from the secret
-    service_account_info = json.loads(os.getenv('SERVICE_ACCOUNT_EMAIL'))
+    service_account_info = json.loads(os.getenv('GOOGLE_CREDENTIALS'))
     creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
 
     return creds
