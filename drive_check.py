@@ -8,7 +8,7 @@ from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from PIL import Image, ImageDraw, ImageFont, ImageFilter  # For adding text to the image
 
 # Define the OAuth 2.0 scopes (Read-only access to Google Drive)
-SCOPES = ['https://www.googleapis.com/auth/drive.readonly']  # Use drive.file scope to upload files
+SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
 
 # Files to download from Google Drive (with random number in the filename)
 random_number = random.randint(1, 11)  # Generate a random number between 1 and 11
@@ -222,7 +222,7 @@ def upload_to_drive(image_path, drive_service):
     # Create a file metadata
     file_metadata = {
         'name': os.path.basename(image_path),  # File name on Google Drive
-        'parents': []  # You can specify folder IDs if needed, leave empty for root directory
+        'parents': ['1-MvD1EumX_yChVWGhH6k34AAAP6REDhc']  # You can specify folder IDs if needed, leave empty for root directory
     }
 
     # Upload the file to Google Drive
