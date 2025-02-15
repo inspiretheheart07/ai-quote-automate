@@ -1,33 +1,32 @@
-name: Run Python Script 3
+name: Google Drive Files List
 
 on:
   push:
     branches:
-      - development
+      - development  # Change this to the branch you want to trigger on
 
 jobs:
-  generate_text:
+  list_files:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write  # Important: Required for Workload Identity Federation
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'  # Or your preferred version
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'  # or whichever version you need
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install google-api-python-client
-            
-      - name: Drive Check
-        env:
-          GCP_API_KEY: ${{ secrets.GOOGLE_API_KEY_DRIVE }}  # Pass secret to script
-        run: |
-          python drive_check.py
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install google-api-python-client
+        pip install google-auth-httplib2
+        pip install google-auth-oauthlib 
+
+    - name: Run Python script to list files from Google Drive
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}  # Load secret from GitHub Secrets
+      run: |
+        python drive_check.py  # Your Python script that will list the files
