@@ -23,7 +23,7 @@ def download_file_with_requests(file_id, destination_path, api_key):
     
     # Make the request using requests library to fetch the file
     response = requests.get(request_uri, headers={'Authorization': f'Bearer {api_key}'}, stream=True)
-    
+    print(f"Successfully downloaded file to {request_uri}")
     if response.status_code == 200:
         with open(destination_path, 'wb') as file:
             for chunk in response.iter_content(chunk_size=1024):
