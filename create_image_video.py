@@ -1,10 +1,10 @@
 import os
 import random
+import tempfile
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from moviepy import *  # for video creation
-from PIL import Image, ImageDraw, ImageFont
-import requests
+from moviepy.editor import *  # for video creation
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 
 # Authenticate using API Key
@@ -18,7 +18,7 @@ def authenticate_google_drive(api_key):
 def download_file_from_drive(file_id, destination_path, api_key):
     service = authenticate_google_drive(api_key)
     request = service.files().get_media(fileId=file_id)
-        # Open file in write-binary mode and attempt to download
+    # Open file in write-binary mode and attempt to download
     with open(destination_path, 'wb') as f:
         try:
             request.execute()
@@ -67,7 +67,7 @@ def wrap_text(draw, text, font, max_width):
 
 
 # Function to convert text to image with background and shadow
-def text_on_background(text, background_image_path, font_path, output_image_path='/tmp/output_image.png', line_height=15, shadow_offset=(5, 5)):
+def text_on_background(text, background_image_path, font_path, output_image_path, line_height=15, shadow_offset=(5, 5)):
     image = Image.open(background_image_path)
     
     if image.mode != 'RGB':
@@ -153,28 +153,38 @@ def create_video_from_image_and_music(image_path, music_folder, output_video_pat
 # Define your Google API Key here
 api_key = os.getenv('GCP_API_KEY')
 
-# Download the background image (bg.png) from Google Drive
-bg_image_file_id = '1mUohoXSVJPlrF4U0TUxztOnBo2saoTZv'  # Replace with the file ID of your background image in Google Drive
-bg_image_path = '/tmp/bg.png'
-download_file_from_drive(bg_image_file_id, bg_image_path, api_key)
+# Create a temporary directory using tempfile for safe file handling
+with tempfile.TemporaryDirectory() as temp_dir:
+    try:
+        # Paths for temporary image and font files
+        bg_image_path = os.path.join(temp_dir, 'bg.png')
+        font_path = os.path.join(temp_dir, 'font.ttf')
+        output_image_path = os.path.join(temp_dir, 'output_image.png')
+        output_video_path = os.path.join(temp_dir, 'output_video.mp4')
 
-# Download the font (font.ttf) from Google Drive
-font_file_id = '1UKJRvJfEomWjImvRCA9K5rywnvYWs7Rf'  # Replace with the file ID of your font in Google Drive
-font_path = '/tmp/font.ttf'
-download_file_from_drive(font_file_id, font_path, api_key)
+        # Download the background image (bg.png) from Google Drive
+        bg_image_file_id = '1mUohoXSVJPlrF4U0TUxztOnBo2saoTZv'  # Replace with the file ID of your background image in Google Drive
+        download_file_from_drive(bg_image_file_id, bg_image_path, api_key)
 
-# Text to overlay
-text = "Inspiring Quote: 'The best way to predict the future is to create it.'"
+        # Download the font (font.ttf) from Google Drive
+        font_file_id = '1UKJRvJfEomWjImvRCA9K5rywnvYWs7Rf'  # Replace with the file ID of your font in Google Drive
+        download_file_from_drive(font_file_id, font_path, api_key)
 
-# Generate an image with text overlay
-output_image_path = text_on_background(text, bg_image_path, font_path, line_height=20, shadow_offset=(5, 0))
+        # Text to overlay
+        text = "Inspiring Quote: 'The best way to predict the future is to create it.'"
 
-# Create a 55-second video with the image and a random music track
-output_video_path = '/tmp/output_video.mp4'
-music_folder = '/path/to/music/calm'  # Path to the folder with music files (e.g., calm folder in current folder)
-create_video_from_image_and_music(output_image_path, music_folder, output_video_path)
+        # Generate an image with text overlay
+        text_on_background(text, bg_image_path, font_path, output_image_path, line_height=20, shadow_offset=(5, 0))
 
-# Upload the video to Google Drive (replace with the correct folder ID)
-drive_folder_id = '1-MvD1EumX_yChVWGhH6k34AAAP6REDhc'  # Replace with the correct folder ID in Google Drive
-uploaded_video_id = upload_file_to_drive(output_video_path, drive_folder_id, api_key)
-print(f"Video uploaded with ID: {uploaded_video_id}")
+        # Create a 55-second video with the image and a random music track
+        music_folder = '/path/to/music/calm'  # Path to the folder with music files (e.g., calm folder in current folder)
+        create_video_from_image_and_music(output_image_path, music_folder, output_video_path)
+
+        # Upload the video to Google Drive (replace with the correct folder ID)
+        drive_folder_id = '1-MvD1EumX_yChVWGhH6k34AAAP6REDhc'  # Replace with the correct folder ID in Google Drive
+        uploaded_video_id = upload_file_to_drive(output_video_path, drive_folder_id, api_key)
+        print(f"Video uploaded with ID: {uploaded_video_id}")
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        raise
