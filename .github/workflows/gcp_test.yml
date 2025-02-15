@@ -3,8 +3,7 @@ name: Download Files from Google Drive
 on:
   push:
     branches:
-      - development
-
+      - main
 
 jobs:
   download-files:
@@ -27,24 +26,17 @@ jobs:
           pip install google-auth-httplib2
           pip install google-auth-oauthlib 
 
-      - name: Set up Google service account credentials
-        run: |
-            # Decode the Base64-encoded service account credentials stored in GitHub Secrets
-            echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT }}" | base64 --decode > service_account.json
-          # This step will decode the Base64 secret and store it in service_account.json
-  
       - name: Run Python script to download files
         env:
-          GOOGLE_SERVICE_ACCOUNT_PATH: ${{ github.workspace }}/service_account.json
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
         run: |
-            python drive_check.py
-  
+          python drive_check.py
+
       - name: Upload downloaded files as artifact
         uses: actions/upload-artifact@v4
         with:
           name: downloaded-files
           path: |
-              bg.png
-              font.ttf
-              *.mp3
-  
+            bg.png
+            font.ttf
+            *.mp3

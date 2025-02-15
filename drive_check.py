@@ -1,7 +1,6 @@
 import os
 import json
 import pickle
-import base64
 import random
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
@@ -18,30 +17,16 @@ files_to_download = ['bg.png', 'font.ttf', f'{random_number}.mp3']  # Add random
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
     creds = None
-    # Check if the token.pickle file exists for storing credentials
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
+    # Get the service account credentials JSON from the environment variable
+    service_account_json = os.getenv('GOOGLE_SERVICE_ACCOUNT_JSON')
+    if not service_account_json:
+        raise ValueError("Service account credentials JSON is not set.")
+    
+    # Parse the service account JSON string
+    credentials_data = json.loads(service_account_json)
 
-    # If credentials are invalid or don't exist, request new authentication
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            # Load service account credentials from the environment variable (this should be your base64-encoded `credentials.json`)
-            encoded_credentials = os.getenv('GOOGLE_SERVICE_ACCOUNT')
-            if not encoded_credentials:
-                raise ValueError("Environment variable GOOGLE_SERVICE_ACCOUNT is not set.")
-            
-            # Decode the base64-encoded string to get the original credentials JSON
-            credentials_data = json.loads(base64.b64decode(encoded_credentials).decode('utf-8'))
-
-            # Use service account credentials to authenticate
-            creds = service_account.Credentials.from_service_account_info(credentials_data, scopes=SCOPES)
-
-        # Save the credentials to token.pickle for future use
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+    # Use service account credentials to authenticate
+    creds = service_account.Credentials.from_service_account_info(credentials_data, scopes=SCOPES)
 
     return creds
 
