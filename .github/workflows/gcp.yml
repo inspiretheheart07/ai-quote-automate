@@ -37,8 +37,8 @@ jobs:
       - name: Run generative AI script
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-        run: |
-          python generate_quote.py
+        # run: |
+        #   python generate_quote.py
 
       - name: Pass Quote to Next Python Script
         run: |
@@ -58,6 +58,11 @@ jobs:
             pip install google-auth-httplib2
             pip install google-auth-oauthlib
             pip list  
+      - name: Debug Authentication Output
+        run: |
+          echo "Access Token:"
+          gcloud auth print-access-token
+
       - name: Create Image Using Bg
         run: |
           python create_image_video.py 
