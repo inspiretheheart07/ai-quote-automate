@@ -2,6 +2,7 @@ import os
 import json
 import pickle
 import base64
+import random
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -10,8 +11,9 @@ from googleapiclient.http import MediaIoBaseDownload
 # Define the OAuth 2.0 scopes (Read-only access to Google Drive)
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
-# Files to download from Google Drive (specify names or pattern)
-files_to_download = ['bg.png', 'font.ttf', f'{random.randint(1, 11)}.mp3']
+# Files to download from Google Drive (with random number in the filename)
+random_number = random.randint(1, 11)  # Generate a random number between 1 and 11
+files_to_download = ['bg.png', 'font.ttf', f'{random_number}.mp3']  # Add random file name
 
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
