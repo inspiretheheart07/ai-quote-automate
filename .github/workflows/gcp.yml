@@ -61,7 +61,7 @@ jobs:
       - name: Debug Authentication Output
         run: |
           echo "Access Token:"
-          gcloud auth print-access-token
+          gcloud services list
 
       - name: Create Image Using Bg
         run: |
