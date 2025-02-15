@@ -16,6 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Install ffmpeg
+      - name: Install ffmpeg
+        run: |
+         sudo apt update
+         sudo apt install -y ffmpeg
+         
       - name: Authenticate with Google Cloud (Workload Identity Federation)
         id: auth
         uses: google-github-actions/auth@v2
