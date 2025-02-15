@@ -10,9 +10,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter  # For adding text to t
 # Define the OAuth 2.0 scopes (Read-only access to Google Drive)
 SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
 
-# Files to download from Google Drive (with random number in the filename)
-random_number = random.randint(1, 11)  # Generate a random number between 1 and 11
-files_to_download = ['bg.png', 'font.ttf', f'{random_number}.mp3']  # Add random file name
+# Only download the background image and font
+files_to_download = ['bg.png', 'font.ttf']  # We don't need the .mp3 file anymore
 
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
@@ -37,7 +36,6 @@ def download_files():
     # Build the Drive API service
     drive_service = build('drive', 'v3', credentials=creds)
 
-    #print all once before iterate
     try:
         # Perform a broad file listing to see what files are available
         results1 = drive_service.files().list(fields="files(id, name)").execute()
@@ -51,7 +49,6 @@ def download_files():
                 print(f'{item["name"]} (ID: {item["id"]})')    
     except Exception as e:
         print(f"Error listing files: {e}")
-
 
     for filename in files_to_download:
         try:
@@ -82,7 +79,7 @@ def download_files():
                 # If the downloaded file is an image, add text to it
                 if filename == 'bg.png':  # Check if it's the background image
                     text = "Your Custom Text Here"
-                    font_path = 'path_to_your_font.ttf'  # Path to the font file (ensure the font is available)
+                    font_path = 'font.ttf'  # Path to the font file (ensure the font is available)
                     output_image_path = f"output_{filename}"
 
                     # Call the function to add text to the background image and upload to Drive
