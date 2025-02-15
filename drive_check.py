@@ -37,6 +37,17 @@ def download_files():
     # Build the Drive API service
     drive_service = build('drive', 'v3', credentials=creds)
 
+    #print all once before iterate
+    results1 = drive_service.files().list(fields="files(id, name)").execute()
+    items1 = results1.get('files', [])
+    if not items1:
+        print('No files found in the Drive.')
+    else:
+        print('Files found in the Drive:')
+        for item in items1:
+            print(f'{item["name"]} (ID: {item["id"]})')
+
+
     for filename in files_to_download:
         try:
             # Search for the file by name
