@@ -14,3 +14,7 @@ response = model.generate_content('Generate me one inspiring, wise, and heart-to
 # Extract and print the quote
 quote = response.text.split(' - ')[0]
 print(quote)
+
+# Save the quote to a file to pass it to the next Python script
+with open("quote.txt", "w") as f:
+    f.write(quote)

@@ -39,3 +39,25 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           python generate_quote.py
+
+      - name: Pass Quote to Next Python Script
+        run: |
+            # Read the quote from the generated file
+            quote=$(cat quote.txt)
+            echo "Quote generated: $quote"
+            
+            # Set the quote as an environment variable for the next step
+            echo "QUOTE=$quote" >> $GITHUB_ENV
+      - name: Install Python dependencies 02
+        run: |
+            pip install --upgrade pip
+            pip install Pillow
+            pip install numpy
+            pip install moviepy
+            pip install google-api-python-client  
+            pip install google-auth-httplib2
+            pip install google-auth-oauthlib
+            pip list  
+      - name: Create Image Using Bg
+        run: |
+          python create_image_video.py 
