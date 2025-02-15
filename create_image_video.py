@@ -1,57 +1,132 @@
 import os
+import io
+import requests
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
-import io
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
-# Google Drive File ID and destination path
-FILE_ID = os.getenv("1-MvD1EumX_yChVWGhH6k34AAAP6REDhc")  # Google Drive file ID for bg.png
-DESTINATION_PATH = "edited_image.png"  # Path to save the edited image
+# Retrieve the API Key from environment variables
+API_KEY = os.getenv('GCP_API_KEY')  # Get the API key from GitHub Secrets
+DRIVE_API = build('drive', 'v3', developerKey=API_KEY)
 
-# Text to add to the image
-TEXT = "Sample Text"
-TEXT_POSITION = (50, 50)  # Position of the text on the image
-TEXT_COLOR = (255, 0, 0)  # Red color for the text
-FONT_SIZE = 30
+# Function to download file from Google Drive by file_id
+def download_file(file_id, destination_path):
+    request = DRIVE_API.files().get_media(fileId=file_id)
+    fh = io.FileIO(destination_path, 'wb')
+    downloader = MediaIoBaseDownload(fh, request)
+    
+    done = False
+    while done is False:
+        status, done = downloader.next_chunk()
+        print(f"Download {int(status.progress() * 100)}%.")
+    
+    print(f"Downloaded file to {destination_path}")
+    return destination_path
 
-# Authenticate with Google Cloud using Workload Identity Federation (done in GitHub Actions)
-service = build("drive", "v3", cache_discovery=False)
+# Function to upload file to Google Drive
+def upload_file(file_path, mime_type, parent_folder_id=None):
+    file_metadata = {
+        'name': os.path.basename(file_path)
+    }
+    if parent_folder_id:
+        file_metadata['parents'] = [parent_folder_id]
 
-# Download the bg.png file from Google Drive
-request = service.files().get_media(fileId=FILE_ID)
-fh = io.FileIO(DESTINATION_PATH, "wb")
-downloader = MediaIoBaseDownload(fh, request)
+    media = MediaFileUpload(file_path, mimetype=mime_type)
+    request = DRIVE_API.files().create(media_body=media, body=file_metadata)
+    file = request.execute()
+    print(f"Uploaded file to Drive with file ID: {file['id']}")
+    return file['id']
 
-done = False
-while done is False:
-    status, done = downloader.next_chunk()
-    print(f"Download {int(status.progress() * 100)}%.")
+# Function to wrap text into multiple lines
+def wrap_text(draw, text, font, max_width):
+    words = text.split(' ')
+    lines = []
+    current_line = ""
 
-# Open the image using Pillow
-image = Image.open(DESTINATION_PATH)
+    for word in words:
+        test_line = current_line + word + " "
+        bbox = draw.textbbox((0, 0), test_line, font=font)
+        text_width = bbox[2] - bbox[0]
+        if text_width <= max_width:
+            current_line = test_line
+        else:
+            if current_line != "":
+                lines.append(current_line.strip())
+            current_line = word + " "
+    if current_line != "":
+        lines.append(current_line.strip())
 
-# Prepare to draw on the image
-draw = ImageDraw.Draw(image)
+    return lines
 
-# Load a font (optional, use default if you don't have a specific font)
-font = ImageFont.load_default()
+# Function to add text on image
+def text_on_background(text, background_image_path, font_path, output_image_path, line_height=15, shadow_offset=(5, 5)):
+    image = Image.open(background_image_path)
+    
+    if image.mode != 'RGB':
+        image = image.convert('RGB')
+
+    image_width, image_height = image.size
+    left = (image_width - 1080) // 2
+    top = (image_height - 1920) // 2
+    right = (image_width + 1080) // 2
+    bottom = (image_height + 1920) // 2
+    cropped_image = image.crop((left, top, right, bottom))
+
+    draw = ImageDraw.Draw(cropped_image)
+    padding_top = 140
+    padding_bottom = 70
+    padding_left = 10
+    padding_right = 190
+
+    available_width = cropped_image.width - padding_left - padding_right
+    available_height = cropped_image.height - padding_top - padding_bottom
+
+    font_size = 150
+    font = ImageFont.truetype(font_path, font_size)
+
+    while True:
+        lines = wrap_text(draw, text, font, available_width)
+        total_text_height = sum([draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines])
+        total_text_height += (len(lines) - 1) * line_height
+        if total_text_height <= available_height:
+            break
+        font_size -= 1
+        font = ImageFont.truetype(font_path, font_size)
+
+    lines = wrap_text(draw, text, font, available_width)
+    total_text_height = sum([draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines])
+    total_text_height += (len(lines) - 1) * line_height
+    position_y = (cropped_image.height - total_text_height) // 2
+    position_x = padding_left
+
+    for line in lines:
+        bbox = draw.textbbox((0, 0), line, font=font)
+        text_width = bbox[2] - bbox[0]
+        position_x = (cropped_image.width - text_width) // 2
+        shadow_position = (position_x + shadow_offset[0], position_y + shadow_offset[1])
+        draw.text(shadow_position, line, fill=(50, 50, 50), font=font)
+        draw.text((position_x, position_y), line, fill=(255, 255, 255), font=font)
+        position_y += draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] + line_height
+
+    sharpened_image = cropped_image.filter(ImageFilter.SHARPEN)
+    sharpened_image.save(output_image_path)
+    print(f"Image saved at: {output_image_path}")
+    return output_image_path
+
+# Example usage:
+file_id = 'YOUR_FILE_ID_FROM_GOOGLE_DRIVE'  # Replace with the actual Google Drive file ID
+destination_path = 'downloaded_image.png'  # Local path to save the downloaded image
+
+# Download the image from Google Drive
+download_file(file_id, destination_path)
+
+# Modify the image by adding text
+font_path = '/path/to/your/font.ttf'  # Ensure this font file is available on your GitHub Actions runner
+output_image_path = 'output_image.png'  # Path to save the modified image
+text = "Hello, this is your custom text!"
 
 # Add text to the image
-draw.text(TEXT_POSITION, TEXT, fill=TEXT_COLOR, font=font)
+text_on_background(text, destination_path, font_path, output_image_path)
 
-# Save the edited image locally
-image.save(DESTINATION_PATH)
-print(f"Text added and image saved as {DESTINATION_PATH}")
-
-# Upload the edited image back to Google Drive
-file_metadata = {
-    "name": "edited_image.png",  # Name of the file in Drive
-    "mimeType": "image/png"  # MIME type for PNG image
-}
-
-media = MediaFileUpload(DESTINATION_PATH, mimetype="image/png")
-
-# Perform the upload
-uploaded_file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
-
-print(f"Uploaded file with ID: {uploaded_file['id']}")
+# Upload the modified image back to Google Drive
+upload_file(output_image_path, 'image/png')
