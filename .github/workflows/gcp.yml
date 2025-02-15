@@ -36,6 +36,6 @@ jobs:
 
       - name: Run generative AI script
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}  # Use the credentials file from auth action
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           python generate_quote.py
