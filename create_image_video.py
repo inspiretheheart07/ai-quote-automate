@@ -1,49 +1,30 @@
 import os
 import random
-from google.auth.transport.requests import Request
-from google.auth import credentials
-from google.auth import impersonated_credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from moviepy import *  # for video creation
+from moviepy.editor import *  # for video creation
 from PIL import Image, ImageDraw, ImageFont
-from google.auth import identity
+import requests
 
 
-# Authenticate using Workload Identity Federation
-def authenticate_google_drive():
-    # Fetch environment variables for GCP project and identity pool
-    project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
-    pool_id = os.environ['WORKLOAD_IDENTITY_POOL_ID']
-    provider_id = os.environ['WORKLOAD_IDENTITY_PROVIDER_ID']
-    
-    # Use Workload Identity Federation to authenticate
-    audience = "identity.googleapis.com"
-    target_credentials = identity.WorkloadIdentityFederation.from_credentials(
-        project_id=project_id,
-        identity_pool_id=pool_id,
-        identity_provider_id=provider_id,
-        audience=audience,
-    )
-    
-    credentials = impersonated_credentials.Credentials.from_target_credentials(target_credentials)
-    
+# Authenticate using API Key
+def authenticate_google_drive(api_key):
     # Build the Google Drive API client
-    service = build('drive', 'v3', credentials=credentials)
+    service = build('drive', 'v3', developerKey=api_key)
     return service
 
 
 # Download file from Google Drive using file ID
-def download_file_from_drive(file_id, destination_path):
-    service = authenticate_google_drive()
+def download_file_from_drive(file_id, destination_path, api_key):
+    service = authenticate_google_drive(api_key)
     request = service.files().get_media(fileId=file_id)
     with open(destination_path, 'wb') as f:
         request.execute()
 
 
 # Upload file to Google Drive
-def upload_file_to_drive(file_path, drive_folder_id):
-    service = authenticate_google_drive()
+def upload_file_to_drive(file_path, drive_folder_id, api_key):
+    service = authenticate_google_drive(api_key)
     
     file_metadata = {
         'name': os.path.basename(file_path),
@@ -163,15 +144,18 @@ def create_video_from_image_and_music(image_path, music_folder, output_video_pat
 
 # Example usage
 
+# Define your Google API Key here
+api_key = os.getenv('GCP_API_KEY')
+
 # Download the background image (bg.png) from Google Drive
 bg_image_file_id = '1mUohoXSVJPlrF4U0TUxztOnBo2saoTZv'  # Replace with the file ID of your background image in Google Drive
 bg_image_path = '/tmp/bg.png'
-download_file_from_drive(bg_image_file_id, bg_image_path)
+download_file_from_drive(bg_image_file_id, bg_image_path, api_key)
 
 # Download the font (font.ttf) from Google Drive
 font_file_id = '1UKJRvJfEomWjImvRCA9K5rywnvYWs7Rf'  # Replace with the file ID of your font in Google Drive
 font_path = '/tmp/font.ttf'
-download_file_from_drive(font_file_id, font_path)
+download_file_from_drive(font_file_id, font_path, api_key)
 
 # Text to overlay
 text = "Inspiring Quote: 'The best way to predict the future is to create it.'"
@@ -186,5 +170,5 @@ create_video_from_image_and_music(output_image_path, music_folder, output_video_
 
 # Upload the video to Google Drive (replace with the correct folder ID)
 drive_folder_id = '1-MvD1EumX_yChVWGhH6k34AAAP6REDhc'  # Replace with the correct folder ID in Google Drive
-uploaded_video_id = upload_file_to_drive(output_video_path, drive_folder_id)
+uploaded_video_id = upload_file_to_drive(output_video_path, drive_folder_id, api_key)
 print(f"Video uploaded with ID: {uploaded_video_id}")
