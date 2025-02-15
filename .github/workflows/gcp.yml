@@ -12,6 +12,10 @@ jobs:
   Get_OIDC_ID_token:
     runs-on: ubuntu-latest
     steps:
+    - id: 'checkout'
+      name: 'Checkout code'
+      uses: 'actions/checkout@v3'
+      
     - id: 'auth'
       name: 'Authenticate to GCP'
       uses: 'google-github-actions/auth@v2'
