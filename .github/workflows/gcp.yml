@@ -18,7 +18,7 @@ jobs:
       with:
           workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_ID }}/locations/global/workloadIdentityPools/${{ secrets.GCP_WORKLOAD_IDENTITY_POOL }}/providers/${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-          create_credentials_file: false 
+          create_credentials_file: true 
     - id: 'gcloud'
       name: 'gcloud'
       run: |-
