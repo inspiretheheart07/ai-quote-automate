@@ -33,6 +33,11 @@ def authenticate():
             # Use the loaded credentials to authenticate
             creds = Credentials.from_authorized_user_info(info=credentials_data, scopes=SCOPES)
 
+            # If the credentials are missing a refresh_token (first-time authorization), trigger the flow
+            if not creds.refresh_token:
+                flow = InstalledAppFlow.from_client_config(credentials_data, SCOPES)
+                creds = flow.run_local_server(port=0)  # This will open a browser window for authentication
+
         # Save the credentials to token.pickle for future use
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
