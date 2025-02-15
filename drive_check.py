@@ -116,7 +116,7 @@ def wrap_text(draw, text, font, max_width):
     return lines
 
 # Function to convert text to image with background and shadow
-def text_on_background(text, background_image_path, font_path, output_image_path='/content/drive/My Drive/quotes_generate/output_image.png', line_height=15, shadow_offset=(5, 5)):
+def text_on_background(text, background_image_path, font_path, output_image_path='output_image.png', line_height=15, shadow_offset=(5, 5)):
     # Open the background image
     image = Image.open(background_image_path)
 
