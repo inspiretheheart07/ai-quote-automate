@@ -38,14 +38,19 @@ def download_files():
     drive_service = build('drive', 'v3', credentials=creds)
 
     #print all once before iterate
-    results1 = drive_service.files().list(fields="files(id, name)").execute()
-    items1 = results1.get('files', [])
-    if not items1:
-        print('No files found in the Drive.')
-    else:
-        print('Files found in the Drive:')
-        for item in items1:
-            print(f'{item["name"]} (ID: {item["id"]})')
+    try:
+        # Perform a broad file listing to see what files are available
+        results1 = drive_service.files().list(fields="files(id, name)").execute()
+        items1 = results1.get('files', [])
+        
+        if not items1:
+            print('No files found in the Drive.')
+        else:
+            print('Files found in the Drive:')
+            for item in items1:
+                print(f'{item["name"]} (ID: {item["id"]})')    
+    except Exception as e:
+        print(f"Error listing files: {e}")
 
 
     for filename in files_to_download:
