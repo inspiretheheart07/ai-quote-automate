@@ -5,37 +5,37 @@ on:
     branches:
       - main
 
-permissions:
-  contents: read
-  id-token: write
-
 jobs:
-  run_python_script:
+  generate_text:
     runs-on: ubuntu-latest
-    steps:
-    
-    # Step 1: Checkout the repository code
-    - id: 'checkout'
-      name: 'Checkout code'
-      uses: 'actions/checkout@v3'
+    permissions:
+      contents: read
+      id-token: write  # Important: Required for Workload Identity Federation
 
-    # Step 2: Authenticate to GCP using Workload Identity Federation
-    - id: 'auth'
-      name: 'Authenticate to GCP'
-      uses: 'google-github-actions/auth@v2'
-      with:
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate with Google Cloud (Workload Identity Federation)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
           workload_identity_provider: 'projects/157416855050/locations/global/workloadIdentityPools/github-actions-yt-push/providers/github'
           service_account: 'yt-push-user@yt-push-451006.iam.gserviceaccount.com'
           create_credentials_file: false  # No need for credentials file if you use Workload Identity Federation
-    
-    # Step 3: Install required Python dependencies
-    - name: 'Install dependencies'
-      run: |
-        python -m pip install --upgrade pip
-        pip install google-generativeai
-        pip list
-    
-    # Step 4: Run the separate Python script (e.g., generate_quote.py)
-    - name: 'Run generate_quote.py script'
-      run: |
-        python generate_quote.py
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # Or your preferred version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-generativeai
+
+      - name: Run generative AI script
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}  # Use the credentials file from auth action
+        run: |
+          python generate_quote.py
