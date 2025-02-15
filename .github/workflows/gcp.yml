@@ -31,7 +31,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo ${{secrets.SERVICE_ACCOUNT_EMAIL}} ${{secrets.GCP_PROJECT_ID}} ${{secrets.GCP_WORKLOAD_IDENTITY_POOL}} ${{secrets.GCP_WORKLOAD_IDENTITY_PROVIDER}}
           python -m pip install --upgrade pip
           pip install --upgrade google-generativeai
 
@@ -59,10 +58,6 @@ jobs:
             pip install google-auth-httplib2
             pip install google-auth-oauthlib
             pip list  
-      - name: Debug Authentication Output
-        run: |
-          echo "Access Token:"
-          gcloud services list
 
       - name: Create Image Using Bg
         run: |
