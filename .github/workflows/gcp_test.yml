@@ -40,7 +40,7 @@ jobs:
             python drive_check.py
   
       - name: Upload downloaded files as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: downloaded-files
           path: |
