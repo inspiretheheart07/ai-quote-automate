@@ -20,8 +20,8 @@ jobs:
       name: 'Authenticate to GCP'
       uses: 'google-github-actions/auth@v2'
       with:
-          workload_identity_provider: 'projects/${{secrets.GCP_PROJECT_ID}}/locations/global/workloadIdentityPools/${{secrets.GCP_WORKLOAD_IDENTITY_POOL}}/providers/${{secrets.GCP_WORKLOAD_IDENTITY_PROVIDER}}'
-          service_account: ${{secrets.SERVICE_ACCOUNT_EMAIL}}
+          workload_identity_provider: 'projects/157416855050/locations/global/workloadIdentityPools/github-actions-yt-push/providers/github'
+          service_account: 'yt-push-user@yt-push-451006.iam.gserviceaccount.com'
           create_credentials_file: true 
     - id: 'gcloud'
       name: 'gcloud'
