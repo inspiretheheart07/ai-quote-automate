@@ -18,8 +18,14 @@ def authenticate_google_drive(api_key):
 def download_file_from_drive(file_id, destination_path, api_key):
     service = authenticate_google_drive(api_key)
     request = service.files().get_media(fileId=file_id)
+        # Open file in write-binary mode and attempt to download
     with open(destination_path, 'wb') as f:
-        request.execute()
+        try:
+            request.execute()
+            print(f"Successfully downloaded file to {destination_path}")
+        except Exception as e:
+            print(f"Error downloading file: {e}")
+            raise
 
 
 # Upload file to Google Drive
