@@ -13,6 +13,6 @@ def run():
     text = "Your Custom Text Here"
     uploaded_image = text_on_background(text, 'bg.png', 'font.ttf', 'output_image.png')
     if uploaded_image:
-        video_path = create_video_with_music(uploaded_image, f"{random.randint(1, 11)}.mp3")
+        video_path = create_video_with_music(uploaded_image, music_file)
 if __name__ == "__main__":
     run()
