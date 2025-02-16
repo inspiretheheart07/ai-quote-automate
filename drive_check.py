@@ -13,40 +13,6 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 # Define the OAuth 2.0 scopes (Read-only access to Google Drive)
 SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
 
-# Only download the background image and font
-files_to_download = ['font.ttf', f"{random.randint(1, 11)}.mp3", 'bg.png' ]
-
-# Function to authenticate the user and load credentials from the environment variable (Service Account)
-def authenticate():
-    creds = None
-    # Get the service account credentials JSON from the environment variable
-    service_account_json = os.getenv('GOOGLE_SERVICE_ACCOUNT_JSON')
-    if not service_account_json:
-        raise ValueError("Service account credentials JSON is not set.")
-    
-    # Parse the service account JSON string
-    credentials_data = json.loads(service_account_json)
-
-    # Use service account credentials to authenticate
-    creds = service_account.Credentials.from_service_account_info(credentials_data, scopes=SCOPES)
-
-    return creds
-
-import os
-import json
-import random
-import pygame
-from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
-from google.auth.transport.requests import Request
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
-from PIL import Image, ImageDraw, ImageFont, ImageFilter  # For adding text to the image
-
-# Define the OAuth 2.0 scopes (Read-only access to Google Drive)
-SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
-
 # Only download the background image, font, and a random music file
 files_to_download = ['font.ttf', f"{random.randint(1, 11)}.mp3", 'bg.png' ]
 
