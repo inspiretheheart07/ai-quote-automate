@@ -64,17 +64,18 @@ def download_file(drive_service, filename):
 def download_files(scopes=None,files_to_download):
     creds = authenticate(scopes=scopes)   
     if files_to_download is None:
-        print(f"::::::::::::::: No Files Provided for download :::::::::::::::")
-        return
+       print(f"::::::::::::::: No Files Provided for download :::::::::::::::")
+       return
+
     if creds:
         try:
             # Build the Google Drive service using credentials
             drive_service = initialize_drive_service(scopes=scopes,creds=creds)
             for file_name in files_to_download:
                 try:
-                     download_file(drive_service, file_name)
+                    download_file(drive_service, file_name)
                 except Exception as e:
-                     print(f"Error downloading {file_name}: {e}")
-                     return None
+                    print(f"Error downloading {file_name}: {e}")
+                    return None
     else:
         print("Authentication failed. No credentials found.")
