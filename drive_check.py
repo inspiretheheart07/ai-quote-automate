@@ -73,8 +73,7 @@ def download_files():
                     output_image_path = f"output_{filename}"
 
                     uploaded_image = text_on_background(text, filename, font_path, output_image_path)
-                    video_path = create_video_with_music(uploaded_image)
-                    upload_to_drive(video_path, drive_service)
+
 
         except Exception as e:
             print(f'An error occurred while downloading {filename}: {e}')
@@ -236,8 +235,8 @@ def download_files():
 
                     # Add text to background and upload to Google Drive
                     uploaded_image = text_on_background(text, filename, font_path, output_image_path)
-                    upload_to_drive(uploaded_image, drive_service)
-
+                    video_path = create_video_with_music(uploaded_image)
+                    upload_to_drive(video_path, drive_service)
         except Exception as e:
             print(f'An error occurred while downloading {filename}: {e}')
 
