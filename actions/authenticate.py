@@ -16,3 +16,12 @@ def authenticate(scopes=None):
 
     creds = service_account.Credentials.from_service_account_info(credentials_data, scopes=scopes)
     return creds
+
+def initialize_drive_service(scopes=None,creds=None):
+    if scopes is None:
+        print(f"::::::::::::::: No Scope Provided :::::::::::::::")
+        return
+    if creds is None:
+        print(f"::::::::::::::: No creds Provided :::::::::::::::")
+        return
+    return build('drive', 'v3', credentials=creds)

@@ -61,21 +61,17 @@ def download_file(drive_service, filename):
         return None
 
 # Example usage:
-def download_files(scopes=None):
-    creds = authenticate(scopes=scopes)
-    
+def download_files(scopes=None,files_to_download):
+    creds = authenticate(scopes=scopes)    
     if creds:
         try:
             # Build the Google Drive service using credentials
-            drive_service = build('drive', 'v3', credentials=creds)
-            
-            # List all files and filter by extensions
-            filtered_files = list_and_filter_files(drive_service, extensions=[".mp3", ".ttf", ".png"])
-            
-            # Download the filtered files
-            for file in filtered_files:
-                download_file(drive_service, file['name'])
-        except Exception as e:
-            print(f"An error occurred while building the Google Drive service: {e}")
+            drive_service = initialize_drive_service(scopes=scopes,creds=creds)
+            for file_name in files_to_download:
+                try:
+                     download_file(drive_service, file_name)
+                except Exception as e:
+                     print(f"Error downloading {file_name}: {e}")
+                     return None
     else:
         print("Authentication failed. No credentials found.")
