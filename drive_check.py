@@ -217,7 +217,7 @@ def upload_to_drive(image_path, drive_service):
 
     # Create a file metadata
     file_metadata = {
-        'name': os.path.basename(image_path),  # File name on Google Drive
+        'name': image_path,  # File name on Google Drive
         'parents': []  # You can specify folder IDs if needed, leave empty for root directory
     }
 
