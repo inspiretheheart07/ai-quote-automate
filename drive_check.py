@@ -110,7 +110,7 @@ def wrap_text(draw, text, font, max_width):
     # Add the last line
     if current_line != "":
         lines.append(current_line.strip())
-
+    print(f"Lines to be drawn: {lines}") 
     return lines
 
 # Function to convert text to image with background and shadow
