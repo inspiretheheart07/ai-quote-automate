@@ -149,7 +149,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     return output_image_path
 
 # Create a 55-second video with background music
-def create_video_with_music(image_path video_duration=55):
+def create_video_with_music(image_path):
     drive_service = build('drive', 'v3', credentials=creds)
     results = drive_service.files().list(q=f"name = '{music_file}'", fields="files(id, name)").execute()
     items = results.get('files', [])
@@ -162,10 +162,10 @@ def create_video_with_music(image_path video_duration=55):
         status, done = downloader.next_chunk()
         print(f"Download {int(status.progress() * 100)}%.")
     fh.close()
-    image_clip = ImageClip(image_path, duration=video_duration)
+    image_clip = ImageClip(image_path, duration=55)
     # If music is provided, load and set it as the audio
     if music_path:
-        audio_clip = AudioFileClip(music_path).subclip(0, video_duration)
+        audio_clip = AudioFileClip(music_path).subclip(0, 55)
         video = image_clip.set_audio(audio_clip)
     else:
         video = image_clip
