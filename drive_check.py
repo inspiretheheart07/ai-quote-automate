@@ -179,7 +179,7 @@ def create_video_with_music(image_path, music_path=None, video_duration=55):
 
     # If music is provided, load and set it as the audio
     if music_path:
-        audio_clip = AudioFileClip(music_path).subclip(0, video_duration)
+        audio_clip = AudioFileClip(music_path)
         video = image_clip.set_audio(audio_clip)
     else:
         video = image_clip
