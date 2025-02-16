@@ -170,21 +170,12 @@ def create_video_with_music(image_path):
     
     try:
         # Load and trim the audio
-        audio_clip = AudioFileClip(music_file)
-        print(f"Audio file loaded: {music_file}")
-
-        # Check the duration of the audio file (useful for debugging)
-        print(f"Audio duration: {audio_clip.duration} seconds")
-
-        audio_clip = audio_clip.set_duration(0, 55)  # Trimming to the first 55 seconds
-
-        
+        audio_clip = AudioFileClip(music_file)        
         # Create video
         image_clip = ImageClip(image_path, duration=55)
-
         # Set audio to the video
         video = image_clip.set_audio(audio_clip)
-
+        video =video.with_end(55)
         # Write the video file to disk
         video_path = 'output_video.mp4'
         video.write_videofile(video_path, fps=24)
