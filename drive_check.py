@@ -156,7 +156,7 @@ def create_video_with_music(image_path):
     items = results.get('files', [])
     file_id = items[0]['id']
     request = drive_service.files().get_media(fileId=file_id)
-    fh = open(filename, 'wb')
+    fh = open(music_file, 'wb')
     downloader = MediaIoBaseDownload(fh, request)
     done = False
     while done is False:
