@@ -62,7 +62,10 @@ def download_file(drive_service, filename):
 
 # Example usage:
 def download_files(scopes=None,files_to_download):
-    creds = authenticate(scopes=scopes)    
+    creds = authenticate(scopes=scopes)   
+    if files_to_download is None:
+        print(f"::::::::::::::: No Files Provided for download :::::::::::::::")
+        return
     if creds:
         try:
             # Build the Google Drive service using credentials
