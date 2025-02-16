@@ -176,8 +176,8 @@ def create_video_with_music(image_path):
         # Check the duration of the audio file (useful for debugging)
         print(f"Audio duration: {audio_clip.duration} seconds")
 
-        audio_clip = audio_clip.subclip(0, 55)  # Trimming to the first 55 seconds
-        audio_clip = audio_clip.subclip(0, 55)
+        audio_clip = audio_clip.set_duration(0, 55)  # Trimming to the first 55 seconds
+
         
         # Create video
         image_clip = ImageClip(image_path, duration=55)
