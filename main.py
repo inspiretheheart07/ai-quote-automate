@@ -1,3 +1,5 @@
+import random
+
 from actions.download_files import download_files
 from actions.image_processing import text_on_background
 from actions.video_creation import create_video_with_music
