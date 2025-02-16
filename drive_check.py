@@ -71,8 +71,9 @@ def download_files():
                     text = "Your Custom Text Here"
                     font_path = 'font.ttf'
                     output_image_path = f"output_{filename}"
-
                     uploaded_image = text_on_background(text, filename, font_path, output_image_path)
+                    video_path = create_video_with_music(uploaded_image,music_file)
+                    upload_to_drive(video_path, drive_service)
 
 
         except Exception as e:
@@ -188,63 +189,6 @@ def create_video_with_music(image_path, music_path=None, video_duration=55):
     video_path = 'output_video.mp4'
     video.write_videofile(video_path, fps=24)
     return video_path
-
-# Function to list files by names and download them
-def download_files():
-    creds = authenticate()
-
-    # Build the Drive API service
-    drive_service = build('drive', 'v3', credentials=creds)
-
-    try:
-        results1 = drive_service.files().list(fields="files(id, name)").execute()
-        items1 = results1.get('files', [])
-
-        if not items1:
-            print('No files found in the Drive.')
-        else:
-            print('Files found in the Drive:')
-            for item in items1:
-                print(f'{item["name"]} (ID: {item["id"]})')    
-    except Exception as e:
-        print(f"Error listing files: {e}")
-
-    for filename in files_to_download:
-        try:
-            results = drive_service.files().list(q=f"name = '{filename}'", fields="files(id, name)").execute()
-            items = results.get('files', [])
-
-            if not items:
-                print(f'No file found with the name: {filename}')
-            else:
-                file_id = items[0]['id']
-                print(f'Downloading file: {filename} (ID: {file_id})')
-
-                # Get the file's content and download it
-                request = drive_service.files().get_media(fileId=file_id)
-                fh = open(filename, 'wb')
-
-                # Use MediaIoBaseDownload to download the file
-                downloader = MediaIoBaseDownload(fh, request)
-                done = False
-                while done is False:
-                    status, done = downloader.next_chunk()
-                    print(f"Download {int(status.progress() * 100)}%.")
-                
-                fh.close()
-                print(f'{filename} downloaded successfully.')
-
-                if filename == 'bg.png':  # Check if it's the background image
-                    text = "Your Custom Text Here"
-                    font_path = 'font.ttf'  # Path to the font file (ensure the font is available)
-                    output_image_path = f"output_{filename}"
-
-                    # Add text to background and upload to Google Drive
-                    uploaded_image = text_on_background(text, filename, font_path, output_image_path)
-                    video_path = create_video_with_music(uploaded_image,music_file)
-                    upload_to_drive(video_path, drive_service)
-        except Exception as e:
-            print(f'An error occurred while downloading {filename}: {e}')
 
 # Function to wrap text into multiple lines if necessary
 def wrap_text(draw, text, font, max_width):
