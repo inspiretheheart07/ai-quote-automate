@@ -27,6 +27,7 @@ jobs:
           pip install Pillow 
           pip install requests
           pip install pygame
+          pip install moviepy
 
       - name: Run Python script to download files
         env:
