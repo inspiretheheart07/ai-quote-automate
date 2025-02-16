@@ -42,3 +42,4 @@ jobs:
             font.ttf
             *.mp3
             output_image.png
+            output_bg.png
