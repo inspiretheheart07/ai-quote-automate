@@ -225,7 +225,8 @@ def upload_to_drive(image_path, drive_service):
     try:
         file = drive_service.files().create(
             media_body=media,
-            body=file_metadata
+            body=file_metadata,
+            fields='id'
         ).execute()
 
         print(f"File uploaded successfully: {file['name']} (ID: {file['id']})")

@@ -38,8 +38,4 @@ jobs:
         with:
           name: downloaded-files
           path: |
-            bg.png
-            font.ttf
-            *.mp3
-            output_image.png
             output_bg.png
