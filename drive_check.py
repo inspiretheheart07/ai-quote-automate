@@ -165,8 +165,8 @@ def create_video_with_music(image_path):
     fh.close()
     image_clip = ImageClip(image_path, duration=55)
     # If music is provided, load and set it as the audio
-    if music_path:
-        audio_clip = AudioFileClip(music_path).subclip(0, 55)
+    if music_file:
+        audio_clip = AudioFileClip(music_file).subclip(0, 55)
         video = image_clip.set_audio(audio_clip)
     else:
         video = image_clip
