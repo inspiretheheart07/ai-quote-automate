@@ -1,7 +1,8 @@
 import os
 import json
 import random
-from moviepy import AudioFileClip, ImageClip
+from moviepy import AudioFileClip, ImageClip  # MoviePy v2.0 import
+from moviepy.video.io.ffmpeg import write_videofile
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -159,7 +160,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
 
     return output_image_path
 
-# Create a 55-second video with background music
+# Create a 55-second video with background music using MoviePy v2.0
 def create_video_with_music(image_path):
     if not os.path.exists(image_path):
         print(f"Image file not found: {image_path}")
@@ -173,12 +174,10 @@ def create_video_with_music(image_path):
         audio_clip = AudioFileClip(music_file)        
         # Create video
         image_clip = ImageClip(image_path, duration=55)
-        # Set audio to the video
-        video = image_clip.set_audio(audio_clip)
-        video =video.with_end(55)
+        image_clip = image_clip.set_audio(audio_clip)
         # Write the video file to disk
         video_path = 'output_video.mp4'
-        video.write_videofile(video_path, fps=24)
+        write_videofile(image_clip, video_path, fps=24)  # Updated to use v2.0 write_videofile method
         return video_path
     except Exception as e:
         print(f"An error occurred while creating the video: {e}")
