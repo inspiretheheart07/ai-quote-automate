@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter  # For adding text to t
 SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
 
 # Only download the background image and font
-files_to_download = ['bg.png', 'font.ttf']  # We don't need the .mp3 file anymore
+files_to_download = ['bg.png', 'font.ttf']
 
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
@@ -37,10 +37,9 @@ def download_files():
     drive_service = build('drive', 'v3', credentials=creds)
 
     try:
-        # Perform a broad file listing to see what files are available
         results1 = drive_service.files().list(fields="files(id, name)").execute()
         items1 = results1.get('files', [])
-        
+
         if not items1:
             print('No files found in the Drive.')
         else:
@@ -52,7 +51,6 @@ def download_files():
 
     for filename in files_to_download:
         try:
-            # Search for the file by name
             results = drive_service.files().list(q=f"name = '{filename}'", fields="files(id, name)").execute()
             items = results.get('files', [])
 
@@ -76,14 +74,14 @@ def download_files():
                 fh.close()
                 print(f'{filename} downloaded successfully.')
 
-                # If the downloaded file is an image, add text to it
                 if filename == 'bg.png':  # Check if it's the background image
                     text = "Your Custom Text Here"
                     font_path = 'font.ttf'  # Path to the font file (ensure the font is available)
                     output_image_path = f"output_{filename}"
 
-                    # Call the function to add text to the background image and upload to Drive
-                    upload_to_drive(text_on_background(text, filename, font_path, output_image_path), drive_service)
+                    # Add text to background and upload to Google Drive
+                    uploaded_image = text_on_background(text, filename, font_path, output_image_path)
+                    upload_to_drive(uploaded_image, drive_service)
 
         except Exception as e:
             print(f'An error occurred while downloading {filename}: {e}')
