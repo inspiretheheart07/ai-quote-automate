@@ -169,6 +169,12 @@ def text_on_background(text, background_image_path, font_path, output_image_path
 
 # Create a 55-second video with background music
 def create_video_with_music(image_path, music_path=None, video_duration=55):
+    try:
+        if not os.path.exists(music_path):
+            print(f"File '{music_path}' does not exist!")
+            return
+    except Exception as e:
+        print(f"Path doesn't exits : {e}")
     image_clip = ImageClip(image_path, duration=video_duration)
 
     # If music is provided, load and set it as the audio
