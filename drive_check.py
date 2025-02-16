@@ -239,7 +239,6 @@ def upload_to_drive(image_path, drive_service):
 
         print(f"File uploaded successfully: {file['name']} (ID: {file['id']})")
     except HttpError as e:
-        traceback.print_exc()
         print(f"An error occurred while uploading the file: {e}")
 
 # Run the function to download files from Google Drive
