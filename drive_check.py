@@ -5,6 +5,7 @@ import traceback
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from PIL import Image, ImageDraw, ImageFont, ImageFilter  # For adding text to the image
 
