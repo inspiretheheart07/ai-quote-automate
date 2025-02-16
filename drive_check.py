@@ -12,9 +12,9 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 # Define the OAuth 2.0 scopes (Read-only access to Google Drive)
 SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
-
+music_file = f"{random.randint(1, 11)}.mp3"
 # Only download the background image, font, and a random music file
-files_to_download = ['font.ttf', f"{random.randint(1, 11)}.mp3", 'bg.png' ]
+files_to_download = ['font.ttf', music_file, 'bg.png' ]
 
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
@@ -235,7 +235,7 @@ def download_files():
 
                     # Add text to background and upload to Google Drive
                     uploaded_image = text_on_background(text, filename, font_path, output_image_path)
-                    video_path = create_video_with_music(uploaded_image)
+                    video_path = create_video_with_music(uploaded_image,music_file)
                     upload_to_drive(video_path, drive_service)
         except Exception as e:
             print(f'An error occurred while downloading {filename}: {e}')
