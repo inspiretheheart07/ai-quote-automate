@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter  # For adding text to t
 SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
 
 # Only download the background image and font
-files_to_download = ['bg.png', 'font.ttf']
+files_to_download = ['font.ttf','bg.png' ]
 
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
