@@ -28,7 +28,7 @@ jobs:
           pip install requests
           pip install pygame
           pip install numpy
-          pip install moviepy
+          pip install moviepy==1.0.3
 
       - name: Run Python script to download files
         env:

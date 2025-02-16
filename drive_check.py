@@ -1,7 +1,7 @@
 import os
 import json
 import random
-from moviepy import *
+from moviepy.editor import *
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -170,21 +170,27 @@ def create_video_with_music(image_path):
     
     try:
         # Load and trim the audio
-        audio_clip = AudioFileClip(music_file)        
+        audio_clip = AudioFileClip(music_file).subclip(0,55)       
         # Create video
         image_clip = ImageClip(image_path, duration=55)
         image_clip = image_clip.set_audio(audio_clip)
         # Write the video file to disk
         video_path = 'output_video.mp4'
-        write_videofile(image_clip, video_path, fps=24)  # Updated to use v2.0 write_videofile method
+        image_clip.write_videofile(video_path, fps=24)  # Updated to use v2.0 write_videofile method
         return video_path
     except Exception as e:
         print(f"An error occurred while creating the video: {e}")
         return None
 
-# Function to upload the image back to Google Drive (implementation omitted for brevity)
+# Function to upload the video to Google Drive
 def upload_to_drive(video_path, drive_service):
-    pass
+    try:
+        file_metadata = {'name': 'output_video.mp4'}
+        media = MediaFileUpload(video_path, mimetype='video/mp4')
+        file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        print(f"Video uploaded successfully, file ID: {file['id']}")
+    except Exception as e:
+        print(f"An error occurred while uploading the video: {e}")
 
 # Start the process
 download_files()
