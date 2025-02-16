@@ -39,3 +39,4 @@ jobs:
           name: downloaded-files
           path: |
             output_bg.png
+            output_video.mp4
