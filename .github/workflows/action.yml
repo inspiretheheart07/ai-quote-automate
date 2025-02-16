@@ -28,3 +28,10 @@ jobs:
         GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
       run: |
         python main.py
+
+    - name: Upload downloaded files as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: downloaded-files
+        path: |
+            output_video.mp4
