@@ -5,7 +5,7 @@ from actions.video_creation import create_video_with_music
 
 def run():
     # Custom scopes if needed, else defaults to Google Drive access
-    custom_scopes = ['https://www.googleapis.com/auth/drive.file']
+    custom_scopes = ['https://www.googleapis.com/auth/drive']
     download_files(scopes=custom_scopes)
 
     # Example usage of text and background image creation
