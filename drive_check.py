@@ -183,6 +183,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
 
     # Draw each line of text with shadow
     for line in lines:
+        print(f"Drawing line: {line}")
         # Calculate the width of the current line of text using textbbox
         bbox = draw.textbbox((0, 0), line, font=font)
         text_width = bbox[2] - bbox[0]
