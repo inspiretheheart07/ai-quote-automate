@@ -164,6 +164,9 @@ def create_video_with_music(image_path):
     if not os.path.exists(image_path):
         print(f"Image file not found: {image_path}")
         return None
+    if not os.path.exists(music_file):
+        print(f"Music file not found: {music_file}")
+        return None
     
     try:
         # Load and trim the audio
