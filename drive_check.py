@@ -217,6 +217,8 @@ def upload_to_drive(image_path, drive_service):
         if not os.path.exists(image_path):
             print(f"File '{image_path}' does not exist!")
             return
+    except Exception as e:
+        print(f"Path doesn't exits : {e}")
     # Create a MediaFileUpload object for the image
     media = MediaFileUpload(image_path, mimetype='image/png')
 
