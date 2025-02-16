@@ -1,6 +1,7 @@
 import os
 import json
 import random
+import traceback 
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -236,7 +237,8 @@ def upload_to_drive(image_path, drive_service):
         ).execute()
 
         print(f"File uploaded successfully: {file['name']} (ID: {file['id']})")
-    except Exception as e:
+    except HttpError as e:
+        traceback.print_exc()
         print(f"An error occurred while uploading the file: {e}")
 
 # Run the function to download files from Google Drive
