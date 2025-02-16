@@ -1,8 +1,7 @@
 import os
 import json
 import random
-from moviepy import AudioFileClip, ImageClip  # MoviePy v2.0 import
-from moviepy.video.io.ffmpeg import write_videofile
+from moviepy import *
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
