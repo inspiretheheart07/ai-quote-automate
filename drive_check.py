@@ -150,6 +150,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
 
 # Create a 55-second video with background music
 def create_video_with_music(image_path):
+     creds = authenticate()
     drive_service = build('drive', 'v3', credentials=creds)
     results = drive_service.files().list(q=f"name = '{music_file}'", fields="files(id, name)").execute()
     items = results.get('files', [])
