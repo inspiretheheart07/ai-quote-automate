@@ -1,6 +1,6 @@
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from googleapiclient.http import MediaIoBaseDownload,MediaFileUpload  
+from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from .authenticate import authenticate
 
 def list_and_filter_files(drive_service, extensions=None):
@@ -61,21 +61,24 @@ def download_file(drive_service, filename):
         return None
 
 # Example usage:
-def download_files(scopes=None,files_to_download):
+def download_files(scopes=None, files_to_download=None):
     creds = authenticate(scopes=scopes)   
     if files_to_download is None:
-       print(f"::::::::::::::: No Files Provided for download :::::::::::::::")
-       return
+        print(f"::::::::::::::: No Files Provided for download :::::::::::::::")
+        return None
 
     if creds:
         try:
             # Build the Google Drive service using credentials
-            drive_service = initialize_drive_service(scopes=scopes,creds=creds)
+            drive_service = build('drive', 'v3', credentials=creds)
             for file_name in files_to_download:
                 try:
                     download_file(drive_service, file_name)
                 except Exception as e:
                     print(f"Error downloading {file_name}: {e}")
                     return None
+        except Exception as e:
+            print(f"An error occurred while building the Google Drive service: {e}")
+            return None
     else:
         print("Authentication failed. No credentials found.")
