@@ -1,25 +1,35 @@
 import os
 import json
 import random
-import google.auth
+from moviepy.editor import *
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
-from moviepy.editor import *
+from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import google_auth_oauthlib.flow
 
-# Define the OAuth 2.0 scopes (YouTube upload access)
-YOUTUBE_SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
+# Define Google API scopes
+SCOPES = ['https://www.googleapis.com/auth/drive']  # Drive scope for downloading files
+YOUTUBE_SCOPES = ['https://www.googleapis.com/auth/youtube.upload']  # YouTube upload scope
 
 # Define the files to be downloaded
 music_file = f"{random.randint(1, 11)}.mp3"
 files_to_download = [music_file, 'font.ttf', 'bg.png']
 
+# Function to authenticate the user and load credentials from the environment variable (Service Account for Drive)
+def authenticate():
+    creds = None
+    service_account_json = os.getenv('GOOGLE_SERVICE_ACCOUNT_JSON')
+    if not service_account_json:
+        raise ValueError("Service account credentials JSON is not set.")
+    
+    credentials_data = json.loads(service_account_json)
+    creds = service_account.Credentials.from_service_account_info(credentials_data, scopes=SCOPES)
+    return creds
+
 # OAuth 2.0 authentication for YouTube
 def youtube_authenticate():
-    # Load client secrets from the OAuth 2.0 client ID JSON file
     credentials = None
     if os.path.exists('credentials.json'):
         flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
@@ -55,28 +65,6 @@ def upload_video_to_youtube(video_path, credentials):
     except Exception as e:
         print(f"An error occurred while uploading the video: {e}")
 
-# Download the files from Google Drive (same as before)
-def download_files():
-    creds = authenticate()
-    drive_service = build('drive', 'v3', credentials=creds)
-
-    for file_name in files_to_download:
-        try:
-            download_file(drive_service, file_name)
-        except Exception as e:
-            print(f"Error downloading {file_name}: {e}")
-            return None
-    
-    # Proceed with creating the video after successful downloads
-    text = "Your Custom Text Here"
-    output_image_path = f"output_bg_image.png"
-    uploaded_image = text_on_background(text, 'bg.png', 'font.ttf', output_image_path)
-    if uploaded_image:
-        video_path = create_video_with_music(uploaded_image)
-        if video_path:
-            credentials = youtube_authenticate()  # Authenticate for YouTube
-            upload_video_to_youtube(video_path, credentials)  # Upload to YouTube
-
 # Function to download a single file from Google Drive
 def download_file(drive_service, filename):
     results = drive_service.files().list(q=f"name = '{filename}'", fields="files(id, name)").execute()
@@ -96,6 +84,28 @@ def download_file(drive_service, filename):
         fh.close()
         print(f'{filename} downloaded successfully.')
 
+# Function to list files by names and download them
+def download_files():
+    creds = authenticate()
+    drive_service = build('drive', 'v3', credentials=creds)
+    
+    for file_name in files_to_download:
+        try:
+            download_file(drive_service, file_name)
+        except Exception as e:
+            print(f"Error downloading {file_name}: {e}")
+            return None
+    
+    # Proceed with creating the video after successful downloads
+    text = "Your Custom Text Here"
+    output_image_path = f"output_bg_image.png"
+    uploaded_image = text_on_background(text, 'bg.png', 'font.ttf', output_image_path)
+    if uploaded_image:
+        video_path = create_video_with_music(uploaded_image)
+        if video_path:
+            credentials = youtube_authenticate()  # Authenticate for YouTube
+            upload_video_to_youtube(video_path, credentials)  # Upload to YouTube
+
 # Function to create a 55-second video with background music using MoviePy
 def create_video_with_music(image_path):
     if not os.path.exists(image_path):
@@ -106,9 +116,12 @@ def create_video_with_music(image_path):
         return None
 
     try:
-        audio_clip = AudioFileClip(music_file).subclip(0, 55)
+        # Load and trim the audio
+        audio_clip = AudioFileClip(music_file).subclip(0, 55)       
+        # Create video
         image_clip = ImageClip(image_path, duration=55)
         image_clip = image_clip.set_audio(audio_clip)
+        # Write the video file to disk
         video_path = 'output_video.mp4'
         image_clip.write_videofile(video_path, fps=24)
         return video_path
@@ -116,5 +129,5 @@ def create_video_with_music(image_path):
         print(f"An error occurred while creating the video: {e}")
         return None
 
-# Start the process
+# Start the process of downloading, creating video, and uploading to YouTube
 download_files()
