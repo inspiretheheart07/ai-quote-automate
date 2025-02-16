@@ -204,7 +204,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     sharpened_image = cropped_image.filter(ImageFilter.SHARPEN)
 
     # Save the resulting image locally before uploading
-    sharpened_image.save(output_image_path)
+    sharpened_image.save(output_image_path,'PNG')
     print(f"Image saved at: {output_image_path}")
 
     return output_image_path
