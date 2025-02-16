@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
 music_file = f"{random.randint(1, 11)}.mp3"
 # Only download the background image, font, and a random music file
-files_to_download = ['font.ttf', 'bg.png' ]
+files_to_download = ['font.ttf', 'bg.png']
 
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
@@ -143,7 +143,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
 
     sharpened_image = cropped_image.filter(ImageFilter.SHARPEN)
 
-    sharpened_image.save(output_image_path,'PNG')
+    sharpened_image.save(output_image_path, 'PNG')
     print(f"Image saved at: {output_image_path}")
 
     return output_image_path
@@ -163,161 +163,33 @@ def create_video_with_music(image_path):
         status, done = downloader.next_chunk()
         print(f"Download {int(status.progress() * 100)}%.")
     fh.close()
+
     image_clip = ImageClip(image_path, duration=55)
-    # If music is provided, load and set it as the audio
-    if music_file:
-        audio_clip = AudioFileClip(music_file).subclip(0, 55)
-        video = image_clip.set_audio(audio_clip)
-    else:
-        video = image_clip
+
+    # Load and trim the audio
+    audio_clip = AudioFileClip(music_file)
+    audio_clip = audio_clip.subclip(0, 55)
+
+    # Set audio to the video
+    video = image_clip.set_audio(audio_clip)
 
     # Write the video file to disk
     video_path = 'output_video.mp4'
     video.write_videofile(video_path, fps=24)
     return video_path
 
-# Function to wrap text into multiple lines if necessary
-def wrap_text(draw, text, font, max_width):
-    words = text.split(' ')
-    lines = []
-    current_line = ""
-
-    for word in words:
-        # Check the width of the current line with the new word using textbbox
-        test_line = current_line + word + " "
-        bbox = draw.textbbox((0, 0), test_line, font=font)
-        text_width = bbox[2] - bbox[0]
-
-        # If it fits, add the word to the current line
-        if text_width <= max_width:
-            current_line = test_line
-        else:
-            # If it doesn't fit, start a new line
-            if current_line != "":
-                lines.append(current_line.strip())
-            current_line = word + " "
-
-    # Add the last line
-    if current_line != "":
-        lines.append(current_line.strip())
-    print(f"Lines to be drawn: {lines}") 
-    return lines
-
-# Function to convert text to image with background and shadow
-def text_on_background(text, background_image_path, font_path, output_image_path='output_image.png', line_height=15, shadow_offset=(5, 5)):
-    # Open the background image
-    image = Image.open(background_image_path)
-
-    # Convert the image to RGB mode if it's not already in RGB mode
-    if image.mode != 'RGB':
-        image = image.convert('RGB')
-
-    # Get the dimensions of the original image
-    image_width, image_height = image.size
-
-    # Calculate the coordinates to crop the image to 1080x1920 (portrait size)
-    left = (image_width - 1080) // 2
-    top = (image_height - 1920) // 2
-    right = (image_width + 1080) // 2
-    bottom = (image_height + 1920) // 2
-
-    # Crop the image to 1080x1920 (portrait size)
-    cropped_image = image.crop((left, top, right, bottom))
-
-    # Set up the drawing context for the cropped image
-    draw = ImageDraw.Draw(cropped_image)
-
-    # Define padding (50px top and bottom, 20px left and right)
-    padding_top = 140
-    padding_bottom = 70
-    padding_left = 10
-    padding_right = 190
-
-    # Calculate the available width and height for the text
-    available_width = cropped_image.width - padding_left - padding_right
-    available_height = cropped_image.height - padding_top - padding_bottom
-
-    # Start with an initial font size and decrease until the text fits
-    font_size = 150  # Start with a large font size
-    font = ImageFont.truetype(font_path, font_size)
-
-    # Try different font sizes to fit the text within the available space
-    while True:
-        # Wrap the text into lines
-        lines = wrap_text(draw, text, font, available_width)
-
-        # Calculate the total height required for the text
-        total_text_height = sum([draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines])
-
-        # Add line height space between lines
-        total_text_height += (len(lines) - 1) * line_height
-
-        # If the text fits within the available space, break the loop
-        if total_text_height <= available_height:
-            break
-
-        # Otherwise, decrease the font size
-        font_size -= 1
-        font = ImageFont.truetype(font_path, font_size)
-
-    # Recalculate lines after adjusting the font size
-    lines = wrap_text(draw, text, font, available_width)
-
-    # Calculate the starting position to center the text vertically
-    total_text_height = sum([draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines])
-    total_text_height += (len(lines) - 1) * line_height  # Add the line height space
-    position_y = (cropped_image.height - total_text_height) // 2
-
-    # Calculate the horizontal position to center the text
-    position_x = padding_left
-
-    # Draw each line of text with shadow
-    for line in lines:
-        print(f"Drawing line: {line}")
-        # Calculate the width of the current line of text using textbbox
-        bbox = draw.textbbox((0, 0), line, font=font)
-        text_width = bbox[2] - bbox[0]
-
-        # Center the text horizontally
-        position_x = (cropped_image.width - text_width) // 2
-
-        # Draw shadow first (shadow_offset is used to create shadow offset)
-        shadow_position = (position_x + shadow_offset[0], position_y + shadow_offset[1])
-        draw.text(shadow_position, line, fill=(50, 50, 50), font=font)  # Darker shadow for better visibility
-
-        # Draw the actual text
-        draw.text((position_x, position_y), line, fill=(255, 255, 255), font=font)  # White text for good contrast
-
-        # Move the vertical position down for the next line, with added line height space
-        position_y += draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] + line_height
-
-    # Apply sharpening filter to the image after drawing text
-    sharpened_image = cropped_image.filter(ImageFilter.SHARPEN)
-
-    # Save the resulting image locally before uploading
-    sharpened_image.save(output_image_path,'PNG')
-    print(f"Image saved at: {output_image_path}")
-
-    return output_image_path
-
 # Function to upload the image back to Google Drive
 def upload_to_drive(image_path, drive_service):
-
     try:
         if not os.path.exists(image_path):
             print(f"File '{image_path}' does not exist!")
             return
     except Exception as e:
-        print(f"Path doesn't exits : {e}")
-    # Create a MediaFileUpload object for the image
+        print(f"Path doesn't exist: {e}")
+    
     media = MediaFileUpload(image_path, mimetype='image/png')
+    file_metadata = {'name': os.path.basename(image_path)}  # File name on Google Drive
 
-    # Create a file metadata
-    file_metadata = {
-        'name': os.path.basename(image_path),  # File name on Google Drive
-    }
-
-    # Upload the file to Google Drive
     try:
         file = drive_service.files().create(
             media_body=media,
