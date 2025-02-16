@@ -25,3 +25,12 @@ def initialize_drive_service(scopes=None,creds=None):
         print(f"::::::::::::::: No creds Provided :::::::::::::::")
         return
     return build('drive', 'v3', credentials=creds)
+
+def initialize_yt_service(scopes=None,creds=None):
+    if scopes is None:
+        print(f"::::::::::::::: No Scope Provided :::::::::::::::")
+        return
+    if creds is None:
+        print(f"::::::::::::::: No creds Provided :::::::::::::::")
+        return
+    return build('youtube', 'v3', credentials=creds)
