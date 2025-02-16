@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
 music_file = f"{random.randint(1, 11)}.mp3"
 # Only download the background image, font, and a random music file
-files_to_download = ['font.ttf', 'bg.png', music_file]
+files_to_download = [music_file,'font.ttf', 'bg.png']
 
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
