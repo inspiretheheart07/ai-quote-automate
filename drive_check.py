@@ -212,6 +212,11 @@ def text_on_background(text, background_image_path, font_path, output_image_path
 
 # Function to upload the image back to Google Drive
 def upload_to_drive(image_path, drive_service):
+
+    try:
+    if not os.path.exists(image_path):
+        print(f"File '{image_path}' does not exist!")
+        return
     # Create a MediaFileUpload object for the image
     media = MediaFileUpload(image_path, mimetype='image/png')
 
