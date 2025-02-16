@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 SCOPES = ['https://www.googleapis.com/auth/drive']  # Use drive.file scope to upload files
 music_file = f"{random.randint(1, 11)}.mp3"
 # Only download the background image, font, and a random music file
-files_to_download = ['font.ttf', 'bg.png']
+files_to_download = ['font.ttf', 'bg.png', music_file]
 
 # Function to authenticate the user and load credentials from the environment variable (Service Account)
 def authenticate():
@@ -152,31 +152,51 @@ def text_on_background(text, background_image_path, font_path, output_image_path
 def create_video_with_music(image_path):
     creds = authenticate()
     drive_service = build('drive', 'v3', credentials=creds)
-    results = drive_service.files().list(q=f"name = '{music_file}'", fields="files(id, name)").execute()
-    items = results.get('files', [])
-    file_id = items[0]['id']
-    request = drive_service.files().get_media(fileId=file_id)
-    fh = open(music_file, 'wb')
-    downloader = MediaIoBaseDownload(fh, request)
-    done = False
-    while done is False:
-        status, done = downloader.next_chunk()
-        print(f"Download {int(status.progress() * 100)}%.")
-    fh.close()
+    
+    try:
+        # Check if the music file exists on Google Drive
+        results = drive_service.files().list(q=f"name = '{music_file}'", fields="files(id, name)").execute()
+        items = results.get('files', [])
+        if not items:
+            raise FileNotFoundError(f"The music file '{music_file}' is missing from Drive!")
+        
+        file_id = items[0]['id']
+        print(f"Downloading music file: {music_file} (ID: {file_id})")
+        
+        request = drive_service.files().get_media(fileId=file_id)
+        fh = open(music_file, 'wb')
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+            print(f"Download {int(status.progress() * 100)}%.")
+        fh.close()
+        
+    except FileNotFoundError as e:
+        print(e)
+        return None
+    except Exception as e:
+        print(f"An error occurred while downloading the music file: {e}")
+        return None
 
-    image_clip = ImageClip(image_path, duration=55)
+    try:
+        # Load and trim the audio
+        audio_clip = AudioFileClip(music_file)
+        audio_clip = audio_clip.subclip(0, 55)
+        
+        # Create video
+        image_clip = ImageClip(image_path, duration=55)
 
-    # Load and trim the audio
-    audio_clip = AudioFileClip(music_file)
-    audio_clip = audio_clip.subclip(0, 55)
+        # Set audio to the video
+        video = image_clip.set_audio(audio_clip)
 
-    # Set audio to the video
-    video = image_clip.set_audio(audio_clip)
-
-    # Write the video file to disk
-    video_path = 'output_video.mp4'
-    video.write_videofile(video_path, fps=24)
-    return video_path
+        # Write the video file to disk
+        video_path = 'output_video.mp4'
+        video.write_videofile(video_path, fps=24)
+        return video_path
+    except Exception as e:
+        print(f"An error occurred while creating the video: {e}")
+        return None
 
 # Function to upload the image back to Google Drive
 def upload_to_drive(image_path, drive_service):
