@@ -4,6 +4,7 @@ import google_auth_oauthlib.flow
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+import pickle
 
 def authenticate(scopes=None):
     creds = None
@@ -35,6 +36,35 @@ def authenticateYt(scopes=None):
     youtube = googleapiclient.discovery.build(
         "youtube", "v3", credentials=credentials)
 
+    return youtube
+
+
+
+
+def authenticateYtTest(scopes=None):
+    creds = None
+    # Token file to store the user's access and refresh tokens
+    token_file = 'token.pickle'
+    
+    # If there are already valid credentials, load them from token.pickle
+    if os.path.exists(token_file):
+        with open(token_file, 'rb') as token:
+            creds = pickle.load(token)
+
+    # If there are no (valid) credentials available, let the user log in
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                CLIENT_SECRETS_FILE, scopes)
+            creds = flow.run_console()  # This will run in the console, no browser
+        # Save the credentials for the next run
+        with open(token_file, 'wb') as token:
+            pickle.dump(creds, token)
+
+    # Build the YouTube API client
+    youtube = build('youtube', 'v3', credentials=creds)
     return youtube
 
 def initialize_drive_service(scopes=None,creds=None):
