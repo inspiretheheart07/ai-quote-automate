@@ -36,9 +36,23 @@ jobs:
         name: downloaded-files
         path: |
             output_video.mp4
-    - name: Decode client_secrets.json from GitHub Secrets
+    - name: Format and save client_secrets.json
       run: |
-        echo "${{ secrets.JSON_OAUTH }}" > client_secrets.json
+        python -c "
+        import json
+        import os
+        
+        # Load the client secrets from the GitHub secret (stored in JSON_OAUTH)
+        client_secrets = os.getenv('JSON_OAUTH')
+        
+        # Parse the secret into a JSON object
+        client_secrets_dict = json.loads(client_secrets)
+        
+        # Re-encode the JSON object with double quotes
+        with open('client_secrets.json', 'w') as f:
+            json.dump(client_secrets_dict, f, indent=2)
+        
+        print('client_secrets.json successfully written')
 
     - name: Authenticate with Google and get Access Token
       id: oauth
