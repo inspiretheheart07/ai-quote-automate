@@ -1,6 +1,6 @@
 import json
 import os
-# import google_auth_oauthlib.flow
+import google_auth_oauthlib.flow
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
@@ -31,7 +31,7 @@ def authenticateYt(scopes=None):
     # Use the file path for `from_client_secrets_file`
     flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
         'client_secrets.json', scopes)    
-    credentials = flow.run_local_server()
+    credentials = flow.run_console()
     youtube = googleapiclient.discovery.build(
         "youtube", "v3", credentials=credentials)
 
