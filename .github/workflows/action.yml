@@ -38,7 +38,7 @@ jobs:
             output_video.mp4
     - name: Decode client_secrets.json from GitHub Secrets
       run: |
-        echo "${{ secrets.GOOGLE_YT_API_KEY }}" > client_secrets.json
+        echo "${{ secrets.JSON_OAUTH }}" > client_secrets.json
 
     - name: Authenticate with Google and get Access Token
       id: oauth
