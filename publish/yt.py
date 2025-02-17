@@ -1,31 +1,29 @@
-import os
-import googleapiclient.discovery
+from actions.authenticate import  authenticateYt
 from googleapiclient.http import MediaFileUpload
 
-def uploadYt(vFile,vTitle,Vdesc):
-
-
-    api_service_name = "youtube"
-    api_version = "v3"
-    DEVELOPER_KEY = os.getenv('GOOGLE_YT_API_KEY')
-
-    youtube = googleapiclient.discovery.build(
-        api_service_name, api_version, developerKey = DEVELOPER_KEY)
-
+def uploadYt(scope, file_path, title, description, category_id="22"):
+    request_body = {
+        "snippet": {
+            "categoryId": category_id,
+            "title": "Uploaded from Python",
+            "description": description,
+            "tags": ["test","python", "api" ]
+        },
+        "status":{
+            "privacyStatus": "private"
+        }
+    }
     request = youtube.videos().insert(
         part="snippet,status",
-        body={
-          "snippet": {
-            "categoryId": "22",
-            "description": Vdesc,
-            "title": vTitle
-          },
-          "status": {
-            "privacyStatus": "private"
-          }
-        },
-        media_body=MediaFileUpload(vFile)
+        body=request_body,
+        media_body=googleapiclient.http.MediaFileUpload(file_path, chunksize=-1, resumable=True)
     )
-    response = request.execute()
 
-    print(response)
+    response = None 
+
+    while response is None:
+        status, response = request.next_chunk()
+        if status:
+            print(f"Upload {int(status.progress()*100)}%")
+
+        print(f"Video uploaded with ID: {response['id']}")
