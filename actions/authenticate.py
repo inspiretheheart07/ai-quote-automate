@@ -21,7 +21,6 @@ def authenticate(scopes=None):
     return creds
 
 def authenticateYt(scopes=None):
-    scopes = scopes
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"    
     service_account_json = os.getenv('GOOGLE_YT_API_KEY')
     if not service_account_json:
