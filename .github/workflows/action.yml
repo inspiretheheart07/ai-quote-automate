@@ -54,16 +54,10 @@ jobs:
         client_secret =  './client_secrets.json'
         
         # OAuth 2.0 flow
-        client_secrets = {
-            "installed": {
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "redirect_uris": ["http://localhost"]
-            }
-        }
+        client_secrets ={"installed":{"client_id":"157416855050-16vdimmqchup204bjvi0puamrn1le2nm.apps.googleusercontent.com","project_id":"yt-push-451006","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"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","redirect_uris":["http://localhost"]}}
         
         # Create the OAuth flow
-        flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_config(client_secret, ['https://www.googleapis.com/auth/youtube.upload'])
+        flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_config(client_secrets, ['https://www.googleapis.com/auth/youtube.upload'])
         
         # Run local server and obtain credentials
         credentials = flow.run_local_server(port=0)
