@@ -19,6 +19,6 @@ def run():
         print(f"::::::::::::::: Video Created Success :::::::::::::::")
         if video_path:
             print(f"::::::::::::::: Video Upload Started :::::::::::::::")
-            # uploadYt(YT_SCOPE,"output_video.mp4", "Video Title", "Description")
+            uploadYt(YT_SCOPE,"output_video.mp4", "Video Title", "Description")
 if __name__ == "__main__":
     run()
