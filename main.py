@@ -6,7 +6,6 @@ from actions.video_creation import create_video_with_music
 from publish.yt import uploadYt
 
 DRIVE_SCOPE = ['https://www.googleapis.com/auth/drive']
-YT_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
 music_file = f"{random.randint(1, 11)}.mp3"
 files_to_download = [music_file, 'font.ttf', 'bg.png']
 
@@ -17,6 +16,6 @@ def run():
     if uploaded_image:
         video_path = create_video_with_music(uploaded_image, music_file)
         if video_path:
-            uploadYt(YT_SCOPE,"output_video.mp4", "Video Title", "Description")
+            uploadYt("output_video.mp4", "Video Title", "Description")
 if __name__ == "__main__":
     run()
