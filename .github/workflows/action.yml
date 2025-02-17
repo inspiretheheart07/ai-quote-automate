@@ -52,7 +52,7 @@ jobs:
         with open('client_secrets.json', 'w') as f:
             json.dump(client_secrets_dict, f, indent=2)
         
-        print('client_secrets.json successfully written')
+        print('client_secrets.json successfully written')"
 
     - name: Authenticate with Google and get Access Token
       id: oauth
