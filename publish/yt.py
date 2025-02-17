@@ -3,9 +3,7 @@ import googleapiclient.discovery
 from googleapiclient.http import MediaFileUpload
 
 def uploadYt(vFile,vTitle,Vdesc):
-    # Disable OAuthlib's HTTPS verification when running locally.
-    # *DO NOT* leave this option enabled in production.
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 
     api_service_name = "youtube"
     api_version = "v3"
