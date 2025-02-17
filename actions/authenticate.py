@@ -56,8 +56,14 @@ def authenticateYtTest(scopes=None):
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
+            service_account_json = os.getenv('GOOGLE_YT_API_KEY')
+            if not service_account_json:
+                raise ValueError("Service account credentials JSON is not set.")    
+                # Write the service account JSON to a temporary file
+            with open('client_secrets.json', 'w') as json_file:
+                json_file.write(service_account_json) 
             flow = InstalledAppFlow.from_client_secrets_file(
-                CLIENT_SECRETS_FILE, scopes)
+                'client_secrets.json', scopes)
             creds = flow.run_console()  # This will run in the console, no browser
         # Save the credentials for the next run
         with open(token_file, 'wb') as token:
