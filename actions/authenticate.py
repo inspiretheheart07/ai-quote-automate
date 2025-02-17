@@ -21,8 +21,6 @@ def authenticate(scopes=None):
 def authenticateYt(scopes=None):
     scopes = scopes
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"    
-    if os.path.exists(TOKEN_FILE):
-        os.remove(TOKEN_FILE)    
     service_account_json = os.getenv('GOOGLE_YT_API_KEY')
     if not service_account_json:
         raise ValueError("Service account credentials JSON is not set.")    
