@@ -65,11 +65,10 @@ jobs:
         
         # Load the client secrets from GitHub secrets
         client_id = os.getenv('CLIENT_ID')
-        client_secret =  './client_secrets.json'
         
         
         # Create the OAuth flow
-        flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(client_secret, ['https://www.googleapis.com/auth/youtube.upload'])
+        flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(client_secrets.json, ['https://www.googleapis.com/auth/youtube.upload'])
         
         # Run local server and obtain credentials
         credentials = flow.run_local_server(port=0)
