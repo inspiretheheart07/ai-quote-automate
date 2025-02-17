@@ -36,3 +36,48 @@ jobs:
         name: downloaded-files
         path: |
             output_video.mp4
+    - name: Authenticate with Google and get Access Token
+      id: oauth
+      run: |
+        python - <<EOF
+        import os
+        import google_auth_oauthlib.flow
+        from google.oauth2.credentials import Credentials
+        from google.auth.transport.requests import Request
+        
+        # Load the client secrets from GitHub secrets
+        client_id = os.getenv('CLIENT_ID')
+        client_secret = os.getenv('CLIENT_SECRET')
+        
+        # OAuth 2.0 flow
+        client_secrets = {
+            "installed": {
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "redirect_uris": ["http://localhost"]
+            }
+        }
+        
+        # Create the OAuth flow
+        flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_config(client_secrets, ['https://www.googleapis.com/auth/youtube.upload'])
+        
+        # Run local server and obtain credentials
+        credentials = flow.run_local_server(port=0)
+        
+        # Save the credentials for future use (could store in a secret if needed)
+        access_token = credentials.token
+        print(f"::set-output name=access_token::{access_token}")
+        EOF
+
+    - name: Set Access Token as Environment Variable
+      run: echo "ACCESS_TOKEN=${{ steps.oauth.outputs.access_token }}" >> $GITHUB_ENV
+
+    - name: Upload video to YouTube
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer $ACCESS_TOKEN" \
+          -F "snippet={\"title\": \"Your Video Title\", \"description\": \"Your video description\", \"tags\": [\"tag1\", \"tag2\"]}" \
+          -F "status={\"privacyStatus\": \"public\"}" \
+          -F "media=output_video.mp4" \
+          "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=multipart&part=snippet,status"
+
