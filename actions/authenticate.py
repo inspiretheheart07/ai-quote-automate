@@ -26,23 +26,33 @@ import googleapiclient.discovery
 TOKEN_FILE = 'token.json'  # Define your token file path
 SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']  # Adjust this based on the API scope you need
 
+import os
+import json
+import google_auth_oauthlib.flow
+import googleapiclient.discovery
+
+TOKEN_FILE = 'token.json'  # Define your token file path
+SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']  # Adjust the scopes you need
+
 def authenticateYt(scopes=None):
     scopes = scopes or SCOPES
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"    
     if os.path.exists(TOKEN_FILE):
-        os.remove(TOKEN_FILE)
+        os.remove(TOKEN_FILE)    
     service_account_json = os.getenv('GOOGLE_YT_API_KEY')
     if not service_account_json:
-        raise ValueError("Service account credentials JSON is not set.")
-    client_secrets_file = json.loads(service_account_json)
+        raise ValueError("Service account credentials JSON is not set.")    
+    # Write the service account JSON to a temporary file
+    with open('client_secrets.json', 'w') as json_file:
+        json_file.write(service_account_json)    
+    # Use the file path for `from_client_secrets_file`
     flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
-        client_secrets_file, scopes)
+        'client_secrets.json', scopes)    
     credentials = flow.run_local_server()
     youtube = googleapiclient.discovery.build(
         "youtube", "v3", credentials=credentials)
 
     return youtube
-
 
 def initialize_drive_service(scopes=None,creds=None):
     if scopes is None:
