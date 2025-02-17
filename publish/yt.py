@@ -1,8 +1,8 @@
-from actions.authenticate import authenticate
+from actions.authenticate import authenticateAnother
 from googleapiclient.http import MediaFileUpload
 
 def uploadYt(scope, file_path, title, description, category_id="22"):
-    youtube = authenticate(scope)
+    youtube = authenticateAnother(scope)
     request_body = {
         "snippet": {
             "categoryId": category_id,
