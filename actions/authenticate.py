@@ -18,24 +18,8 @@ def authenticate(scopes=None):
     creds = service_account.Credentials.from_service_account_info(credentials_data, scopes=scopes)
     return creds
 
-import os
-import json
-import google_auth_oauthlib.flow
-import googleapiclient.discovery
-
-TOKEN_FILE = 'token.json'  # Define your token file path
-SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']  # Adjust this based on the API scope you need
-
-import os
-import json
-import google_auth_oauthlib.flow
-import googleapiclient.discovery
-
-TOKEN_FILE = 'token.json'  # Define your token file path
-SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']  # Adjust the scopes you need
-
 def authenticateYt(scopes=None):
-    scopes = scopes or SCOPES
+    scopes = scopes
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"    
     if os.path.exists(TOKEN_FILE):
         os.remove(TOKEN_FILE)    
