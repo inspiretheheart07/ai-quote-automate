@@ -16,7 +16,9 @@ def run():
     uploaded_image = text_on_background(text, 'bg.png', 'font.ttf', 'output_image.png')
     if uploaded_image:
         video_path = create_video_with_music(uploaded_image, music_file)
+        print(f"::::::::::::::: Video Created Success :::::::::::::::")
         if video_path:
+            print(f"::::::::::::::: Video Upload Started :::::::::::::::")
             uploadYt(YT_SCOPE,"output_video.mp4", "Video Title", "Description")
 if __name__ == "__main__":
     run()
