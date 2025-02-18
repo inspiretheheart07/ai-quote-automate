@@ -79,6 +79,7 @@ jobs:
 
     - name: Run script
       env:
+        JSON_OAUTH_MAIN: ${{ secrets.JSON_OAUTH_MAIN }}  # Pass the secret here
         GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
         GOOGLE_YT_API_KEY: ${{ secrets.GOOGLE_YT_API_KEY }}
         FILE_PATH: "output_video.mp4"
