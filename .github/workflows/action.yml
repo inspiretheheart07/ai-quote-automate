@@ -74,6 +74,8 @@ jobs:
             json.dump(client_secrets_dict, f, indent=2)
 
         print('oauth.json successfully written')"
+      env:
+          JSON_OAUTH_MAIN: ${{ secrets.JSON_OAUTH_MAIN }}  # Pass the secret here
 
     - name: Run script
       env:
