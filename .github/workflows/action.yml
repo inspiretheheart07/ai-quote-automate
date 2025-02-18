@@ -29,6 +29,7 @@ jobs:
         import json
         import os
 
+        print(os.environ)
         # Load the client secrets from the GitHub secret (stored in JSON_OAUTH)
         client_secrets = os.getenv('JSON_OAUTH')
         
