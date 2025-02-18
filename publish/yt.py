@@ -57,20 +57,20 @@ VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")
 
 
 def get_authenticated_service():
-        # Directly use oauth.json for OAuth authentication
-    flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
-                                   scope=YOUTUBE_UPLOAD_SCOPE,
-                                   message=MISSING_CLIENT_SECRETS_MESSAGE)
+    # Load the OAuth credentials from the environment
+    oauth_credentials = os.getenv('JSON_OAUTH_MAIN')
 
+    if not oauth_credentials:
+        exit('Error: JSON_OAUTH_MAIN is not set.')
 
-    storage = Storage("%s-oauth2.json" % sys.argv[0])
-    credentials = storage.get()
+    # Parse the credentials from the JSON
+    credentials_dict = json.loads(oauth_credentials)
+    
+    # Convert the dictionary to a Credentials object
+    credentials = Credentials.from_authorized_user_info(info=credentials_dict)
 
-    if credentials is None or credentials.invalid:
-        credentials = run_flow(flow, storage, None)
-
-    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                 http=credentials.authorize(httplib2.Http()))
+    # Return the authenticated service
+    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=credentials)
 
 def initialize_upload(file_path, title, description, category =22, keywords = 'just upload', privacy_status='public'):
     youtube = get_authenticated_service()
