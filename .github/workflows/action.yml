@@ -60,7 +60,7 @@ jobs:
     - name: Upload video to YouTube
       run: |
         curl -X POST \
-          -H "Authorization: Bearer $ACCESS_TOKEN" \
+          -H "Authorization: Bearer 1//0g1kSpWxdpSbcCgYIARAAGBASNwF-L9IrYAKxr9L2rtok8o9KGooUBPH-7QYLP-pKutjsZsIGp1eUgQBq0f2mGj21gV-G97ckE78" \
           -F "snippet={\"title\": \"Your Video Title\", \"description\": \"Your video description\", \"tags\": [\"tag1\", \"tag2\"]}" \
           -F "status={\"privacyStatus\": \"public\"}" \
           -F "media=output_video.mp4" \
