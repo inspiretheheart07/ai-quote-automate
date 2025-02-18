@@ -34,14 +34,16 @@ YOUTUBE_API_VERSION = "v3"
 VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")
 
 def get_authenticated_service():
-    """Authenticate and create a YouTube API service client."""
-    # Load the service account credentials
-    credentials = service_account.Credentials.from_service_account_file(
-        'oauth.json', scopes=[YOUTUBE_UPLOAD_SCOPE])
+        # Directly use oauth.json for OAuth authentication
+    flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
+                                   scope=YOUTUBE_UPLOAD_SCOPE,
+                                   message=MISSING_CLIENT_SECRETS_MESSAGE)
 
-    # Build and return the API service client
-    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=credentials)
-    return youtube
+    # Run OAuth flow without storage (no file-based saving)
+    credentials = run_flow(flow, None, args)
+
+    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+                 http=credentials.authorize(httplib2.Http()))
 
 def initialize_upload(file_path, title, description, category =22, keywords = 'just upload', privacy_status='public'):
     youtube = get_authenticated_service()
