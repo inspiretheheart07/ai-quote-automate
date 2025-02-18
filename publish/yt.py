@@ -62,7 +62,7 @@ def get_authenticated_service():
                                    message=MISSING_CLIENT_SECRETS_MESSAGE)
 
     # Run OAuth flow without storage (no file-based saving)
-    credentials = run_flow(flow, None, args)
+    credentials = run_flow(flow, None, None)
 
     return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
                  http=credentials.authorize(httplib2.Http()))
