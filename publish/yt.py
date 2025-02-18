@@ -16,6 +16,8 @@ httplib2.RETRIES = 1
 # Maximum number of times to retry before giving up.
 MAX_RETRIES = 10
 
+CLIENT_SECRETS_FILE = "client_secrets.json"
+
 # Always retry when these exceptions are raised.
 RETRIABLE_EXCEPTIONS = (
     httplib2.HttpLib2Error, IOError, http.client.NotConnected,
