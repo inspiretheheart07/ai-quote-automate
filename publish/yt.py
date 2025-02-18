@@ -43,7 +43,8 @@ def get_authenticated_service():
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=credentials)
     return youtube
 
-def initialize_upload(youtube, file_path, title, description, category, keywords, privacy_status):
+def initialize_upload(file_path, title, description, category =22, keywords = 'just upload', privacy_status='public'):
+    youtube = get_authenticated_service()
     """Upload the video to YouTube."""
     tags = keywords.split(",") if keywords else None
 

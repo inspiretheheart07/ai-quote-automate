@@ -3,7 +3,7 @@ import random
 from actions.download_files import download_files
 from actions.image_processing import text_on_background
 from actions.video_creation import create_video_with_music
-from publish.yt import uploadYt
+from publish.yt import initialize_upload
 
 DRIVE_SCOPE = ['https://www.googleapis.com/auth/drive']
 YT_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
@@ -19,6 +19,6 @@ def run():
         print(f"::::::::::::::: Video Created Success :::::::::::::::")
         if video_path:
             print(f"::::::::::::::: Video Upload Started :::::::::::::::")
-            uploadYt(YT_SCOPE,"output_video.mp4", "Video Title", "Description")
+            initialize_upload("output_video.mp4", "Video Title", "Description")
 if __name__ == "__main__":
     run()
