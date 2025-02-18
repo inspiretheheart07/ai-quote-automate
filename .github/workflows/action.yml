@@ -46,9 +46,8 @@ jobs:
           with open('client_secrets.json', 'w') as f:
               json.dump(client_secrets_dict, f, indent=2)
       
-          print('client_secrets.json successfully written')
-          "
-        env:
+          print('client_secrets.json successfully written')"
+      env:
           JSON_OAUTH: ${{ secrets.JSON_OAUTH }}  # Pass the secret here
       
     
