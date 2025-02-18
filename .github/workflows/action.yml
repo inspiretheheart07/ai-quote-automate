@@ -23,30 +23,34 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
-    - name: Format and save client_secrets.json
-      run: |
-        python -c "
-        import json
-        import os
-
-        print(os.environ)
-        # Load the client secrets from the GitHub secret (stored in JSON_OAUTH)
-        client_secrets = os.getenv('JSON_OAUTH')
-        
-        # Debugging: Check if client_secrets is set
-        print(f'Client secrets from JSON_OAUTH: {client_secrets[:100]}')  # Print first 100 chars for debugging
-        
-        if not client_secrets:
-            exit('Error: JSON_OAUTH is not set.')
-
-        # Parse the secret into a JSON object
-        client_secrets_dict = json.loads(client_secrets)
-
-        # Re-encode the JSON object with double quotes
-        with open('client_secrets.json', 'w') as f:
-            json.dump(client_secrets_dict, f, indent=2)
-
-        print('client_secrets.json successfully written')"
+        - name: Format and save client_secrets.json
+        run: |
+          python -c "
+          import json
+          import os
+      
+          # Load the client secrets from the GitHub secret (stored in JSON_OAUTH)
+          client_secrets = os.getenv('JSON_OAUTH')
+          
+          # Debugging: Check if client_secrets is set
+          if client_secrets is None:
+              print('Error: JSON_OAUTH environment variable is not set.')
+              exit(1)
+      
+          print(f'Client secrets from JSON_OAUTH: {client_secrets[:100]}')  # Print first 100 chars for debugging
+      
+          # Parse the secret into a JSON object
+          client_secrets_dict = json.loads(client_secrets)
+      
+          # Re-encode the JSON object with double quotes
+          with open('client_secrets.json', 'w') as f:
+              json.dump(client_secrets_dict, f, indent=2)
+      
+          print('client_secrets.json successfully written')
+          "
+        env:
+          JSON_OAUTH: ${{ secrets.JSON_OAUTH }}  # Pass the secret here
+      
     
     - name: Format and save oauth.json
       run: |
