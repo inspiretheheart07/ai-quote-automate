@@ -61,8 +61,12 @@ def get_authenticated_service():
                                    scope=YOUTUBE_UPLOAD_SCOPE,
                                    message=MISSING_CLIENT_SECRETS_MESSAGE)
 
-    # Run OAuth flow without storage (no file-based saving)
-    credentials = run_flow(flow, None, None)
+
+    storage = Storage("%s-oauth2.json" % sys.argv[0])
+    credentials = storage.get()
+
+    if credentials is None or credentials.invalid:
+        credentials = run_flow(flow, storage, None)
 
     return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
                  http=credentials.authorize(httplib2.Http()))
