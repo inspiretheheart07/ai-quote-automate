@@ -10,16 +10,80 @@ except ImportError:
     import httplib
 import httplib2
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload 
+from googleapiclient.errors import HttpError 
+import http.client
+import random
+import time
 
 YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 CLIENT_SECRETS_FILE = "client_secrets.json"
-
-                
+RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
+RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, http.client.NotConnected,
+  http.client.IncompleteRead, http.client.ImproperConnectionState,
+  http.client.CannotSendRequest, http.client.CannotSendHeader,
+  http.client.ResponseNotReady, http.client.BadStatusLine)
+MAX_RETRIES = 10
 
 def initialize_upload(Vfile,Vtitle,Vdesc) :
-    print(get_service(YOUTUBE_UPLOAD_SCOPE,YOUTUBE_API_SERVICE_NAME))
+    yt = get_service(YOUTUBE_UPLOAD_SCOPE,YOUTUBE_API_SERVICE_NAME)
+
+    body = dict(
+        snippet=dict(
+            title=Vtitle,
+            description=Vdesc,
+            tags=['video1','video3'],
+            categoryId=22
+        ),
+        status=dict(
+            privacyStatus='public'
+        )
+    )
+    
+    insert_request = yt.videos().insert(
+        part=",".join(body.keys()),
+        body=body,
+        media_body=MediaFileUpload(Vfile, chunksize=-1, resumable=True)
+    )
+    resumable_upload(insert_request)
+
+
+
+def resumable_upload(insert_request) :
+    response = None
+    error = None
+    retry = 0
+    while response is None:
+        try:
+            print("Uploading file...")
+            status, response = insert_request.next_chunk()
+            if response is not None:
+                if 'id' in response:
+                    print("Video id '%s' was successfully uploaded." % response['id'])
+                else:
+                    exit("The upload failed with an unexpected response: %s" % response)
+        except HttpError as e:  # updated exception handling
+            if e.resp.status in RETRIABLE_STATUS_CODES:
+                error = "A retriable HTTP error %d occurred:\n%s" % (e.resp.status,
+                                                                     e.content)
+            else:
+                raise
+        except RETRIABLE_EXCEPTIONS as e:  # updated exception handling
+            error = "A retriable error occurred: %s" % e
+
+        if error is not None:
+            print(error)
+            retry += 1
+            if retry > MAX_RETRIES:
+                exit("No longer attempting to retry.")
+
+            max_sleep = 2 ** retry
+            sleep_seconds = random.random() * max_sleep
+            print("Sleeping %f seconds and then retrying..." % sleep_seconds)
+            time.sleep(sleep_seconds)
+
 
 def get_service(scope, service, secret=None): 
     print(f"Using {CLIENT_SECRETS_FILE}")
