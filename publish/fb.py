@@ -85,17 +85,9 @@ def upload_video_to_facebook(page_access_token, video_path, caption, page_id):
 def uploadToFb(video_file,caption):
    # Facebook Page access token (your long-lived token)
     facebook_page_access_token = os.getenv("FACEBOOK_PAGE_ACCESS_TOKEN")  # Your long-lived token
-    # Decode and print the expiration time of the long-lived token
-    exp_time = decode_jwt(facebook_page_access_token)
-    
-    if exp_time:
-        print(f"Token expires at: {exp_time}")
 
     # Upload video to Facebook (always uses the latest token)
     upload_video_to_facebook(facebook_page_access_token, video_file, caption, facebook_page_id)
 
     # Refresh the token
     facebook_page_access_token = refresh_facebook_token(facebook_page_access_token)
-    
-    # After refreshing the token, print the new token (optional, for debugging)
-    print(f"New Access Token: ******* ")
