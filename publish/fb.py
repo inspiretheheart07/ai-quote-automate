@@ -9,7 +9,7 @@ import time
 facebook_app_id = os.getenv("FACEBOOK_APP_ID")  # Your Facebook App ID
 facebook_app_secret = os.getenv("FACEBOOK_APP_SECRET")  # Your Facebook App Secret
 
-
+FACEBOOK_API_VERSION = os.getenv("FACEBOOK_API_VERSION") 
 
 # Facebook Page ID
 facebook_page_id = os.getenv("FACEBOOK_PAGE_ID")
@@ -42,7 +42,7 @@ def decode_jwt(token):
 
 def refresh_facebook_token(long_lived_token):
     """Refresh the long-lived token using the long-lived token."""
-    FACEBOOK_API_VERSION = os.getenv("FACEBOOK_API_VERSION") 
+    
     url = f'https://graph.facebook.com/{FACEBOOK_API_VERSION}/oauth/access_token'
     
     params = {
@@ -64,7 +64,7 @@ def refresh_facebook_token(long_lived_token):
 
 def upload_video_to_facebook(page_access_token, video_path, caption, page_id):
     """Upload video to Facebook."""
-    url = f'https://graph-video.facebook.com/v16.0/{page_id}/reels'
+    url = f'https://graph-video.facebook.com/{FACEBOOK_API_VERSION}/{page_id}/videos'
     
     params = {
         'access_token': page_access_token,
