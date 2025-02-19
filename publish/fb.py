@@ -42,7 +42,8 @@ def decode_jwt(token):
 
 def refresh_facebook_token(long_lived_token):
     """Refresh the long-lived token using the long-lived token."""
-    url = f'https://graph.facebook.com/v16.0/oauth/access_token'
+    FACEBOOK_API_VERSION = os.getenv("FACEBOOK_API_VERSION") 
+    url = f'https://graph.facebook.com/{FACEBOOK_API_VERSION}/oauth/access_token'
     
     params = {
         'grant_type': 'fb_exchange_token',
@@ -97,4 +98,4 @@ def uploadToFb(video_file,caption):
     facebook_page_access_token = refresh_facebook_token(facebook_page_access_token)
     
     # After refreshing the token, print the new token (optional, for debugging)
-    print(f"New Access Token: {facebook_page_access_token}")
+    print(f"New Access Token: ******* ")
