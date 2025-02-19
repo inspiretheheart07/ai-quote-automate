@@ -9,8 +9,7 @@ import time
 facebook_app_id = os.getenv("FACEBOOK_APP_ID")  # Your Facebook App ID
 facebook_app_secret = os.getenv("FACEBOOK_APP_SECRET")  # Your Facebook App Secret
 
-# Facebook Page access token (your long-lived token)
-facebook_page_access_token = os.getenv("FACEBOOK_PAGE_ACCESS_TOKEN")  # Your long-lived token
+
 
 # Facebook Page ID
 facebook_page_id = os.getenv("FACEBOOK_PAGE_ID")
@@ -83,7 +82,8 @@ def upload_video_to_facebook(page_access_token, video_path, caption, page_id):
         print(f"Error uploading video: {response.text}")
 
 def uploadToFb(video_file,caption):
-
+   # Facebook Page access token (your long-lived token)
+    facebook_page_access_token = os.getenv("FACEBOOK_PAGE_ACCESS_TOKEN")  # Your long-lived token
     # Decode and print the expiration time of the long-lived token
     exp_time = decode_jwt(facebook_page_access_token)
     

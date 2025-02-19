@@ -88,6 +88,9 @@ jobs:
         CATEGORY: "22"  # Example category ID
         KEYWORDS: "example, test, github"
         PRIVACY_STATUS: "public"
+        FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }} 
+        FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }} 
+        FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }} 
       run: |
         python main.py
 
