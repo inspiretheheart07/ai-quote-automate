@@ -64,7 +64,7 @@ def refresh_facebook_token(long_lived_token):
 
 def upload_video_to_facebook(page_access_token, video_path, caption, page_id):
     """Upload video to Facebook."""
-    url = f'https://graph-video.facebook.com/v16.0/{page_id}/videos'
+    url = f'https://graph-video.facebook.com/v16.0/{page_id}/reels'
     
     params = {
         'access_token': page_access_token,
