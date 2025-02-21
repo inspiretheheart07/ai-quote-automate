@@ -73,12 +73,13 @@ def publishReel(page_id, page_access_token, video_id):
 # Example usage
 page_id = os.getenv("FACEBOOK_PAGE_ID")
 page_access_token = os.getenv("FACEBOOK_PAGE_ACCESS_TOKEN")
-video_file_path = 'output_video.mp4'
-file_size = os.path.getsize(video_file_path)
+
 FACEBOOK_API_VERSION = os.getenv("FACEBOOK_API_VERSION") 
 
 
 def fbUpload():
+    video_file_path = 'output_video.mp4'
+    file_size = os.path.getsize(video_file_path)
     # Step 1: Initialize the upload session
     video_id, upload_url = initialize_upload_session(page_id, page_access_token, file_size)
     if video_id and upload_url:
