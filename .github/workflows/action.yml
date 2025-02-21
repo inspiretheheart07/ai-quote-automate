@@ -106,3 +106,5 @@ jobs:
         name: downloaded-files
         path: |
             output_video.mp4
+            output_video_converted.mp4
+
