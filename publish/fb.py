@@ -23,12 +23,12 @@ def initialize_upload_session(page_id, page_access_token, file_size):
         print(f"Error initializing upload session: {response.text}")
 
 
-def finalize_upload(page_id, page_access_token, video_id, Vpath):
+def finalize_upload(page_id, page_access_token, video_id, video_file_path):
     """
     Finalize the upload session.
     """
     upload_url = f'https://rupload.facebook.com/video-upload/{FACEBOOK_API_VERSION}/{video_id}'
-    file_size = os.stat(Vpath).st_size
+    file_size = os.stat(video_file_path).st_size
     # Headers
     headers = {
         "Authorization": f"OAuth {page_access_token}",
