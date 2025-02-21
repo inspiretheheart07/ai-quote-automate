@@ -7,4 +7,4 @@ Pillow==9.0.1
 oauth2client
 facebook_business
 ffmpeg-python
-subprocess
+subprocess.run

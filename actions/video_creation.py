@@ -1,5 +1,5 @@
 from moviepy.editor import AudioFileClip, ImageClip
-import subprocess
+from subprocess import run
 
 
 def create_video_with_music(image_path, music_file):
@@ -54,6 +54,6 @@ def convert_to_reels(aspect_ratio='16:9', duration=59):
     ]
     
     # Run the FFmpeg command
-    subprocess.run(command)
+    run(command)
     
     print(f"Video successfully converted and saved as {'output_video_converted.mp4'}")
