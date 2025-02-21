@@ -4,7 +4,7 @@ from actions.download_files import download_files
 from actions.image_processing import text_on_background
 from actions.video_creation import create_video_with_music
 from publish.yt import initialize_upload
-from publish.fb import uploadToFb
+from publish.fb import fbUpload
 
 DRIVE_SCOPE = ['https://www.googleapis.com/auth/drive']
 YT_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
@@ -21,7 +21,7 @@ def run():
         if video_path:
             print(f"::::::::::::::: Video Upload Started :::::::::::::::")
             # initialize_upload("output_video.mp4", "Video Title", "Description")
-            uploadToFb("output_video.mp4", "Video Title")
+            fbUpload()
 
 if __name__ == "__main__":
     run()
