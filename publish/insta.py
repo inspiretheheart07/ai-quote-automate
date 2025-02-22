@@ -114,7 +114,6 @@ def postInsta(quote_data) :
         if upload_status :
             publish_response = publish_container(creation_id, access_token,instagram_account_id)
             print("Publish Response:", publish_response)
-            sendMail(None,publish_response)
     else:
         print("Failed to upload the media.")
         sendMail(None,"Insta upload Failed")
