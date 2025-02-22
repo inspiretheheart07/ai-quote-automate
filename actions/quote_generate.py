@@ -10,13 +10,6 @@ import os
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 def genererateQuoteEnglish():
-
-    return {
-        "quote": "The only way to do great work is to love what you do. - Steve Jobs",
-        "title": "Passion for Work",
-        "description": "This quote emphasizes the importance of finding passion in your work. It suggests that genuine fulfillment and excellence come from pursuing what you truly love.",
-        "tags": ["passion", "work", "motivation", "inspiration", "success"]
-    }
         # Check if the API key is set
     if GOOGLE_API_KEY is None:
         raise ValueError("GOOGLE_API_KEY environment variable not set.")

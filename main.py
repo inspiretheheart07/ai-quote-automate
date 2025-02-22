@@ -7,6 +7,7 @@ from publish.yt import initialize_upload
 from publish.fb import fbUpload
 from publish.insta import postInsta
 from publish.threads import threadsPost
+from drop_box.delete import delete_file
 
 DRIVE_SCOPE = ['https://www.googleapis.com/auth/drive']
 YT_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
@@ -21,11 +22,11 @@ def run():
         if uploaded_image:
             video_path = create_video_with_music(uploaded_image, music_file)
             if video_path:
-                # initialize_upload("output_video.mp4", quote_json.title, quote_json.description,quote_json.tags)
+                initialize_upload("output_video.mp4", quote_json.title, quote_json.description,quote_json.tags)
                 fbUpload(quote_json)
                 postInsta(quote_json)
                 threadsPost(quote_json)
-                
+                delete_file()
 
 if __name__ == "__main__":
     run()
