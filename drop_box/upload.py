@@ -26,7 +26,7 @@ def create_shared_link(dropbox_path):
         # Modify the link to be a direct download link by replacing 'dl=0' with 'dl=1'
         direct_link = shared_link_metadata.url.replace("?dl=0", "?dl=1")
         print(f"Direct link: {direct_link}")
-        return direct_link
+        return f'{direct_link}&raw=1'
     except dropbox.exceptions.ApiError as e:
         print(f"Error creating shared link: {e}")
         return None
