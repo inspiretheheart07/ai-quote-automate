@@ -110,13 +110,13 @@ def threadsPost(quote_data):
                 # Step 3: Publish the media after it's ready
                 publish_response = publish_container(creation_id, access_token, threads_account_id)
                 print("Published to threads Sucessfully")
-                delete_file()
+                # delete_file()
             else:
                 sendMail(None,"Failed to upload to Threads : Threads : 112")
                 print("Failed to upload")
-                delete_file()
+                # delete_file()
     else:
         sendMail(None,"Failed to upload to Threads : 115")
         print("Failed to upload the media.")
-        delete_file()
+        # delete_file()
     
