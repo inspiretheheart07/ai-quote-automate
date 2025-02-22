@@ -22,7 +22,7 @@ def run():
         if uploaded_image:
             video_path = create_video_with_music(uploaded_image, music_file)
             if video_path:
-                initialize_upload("output_video.mp4", quote_json.title, quote_json.description,quote_json.tags)
+                initialize_upload("output_video.mp4", quote_json["title"], quote_json["description"],quote_json["tags"])
                 fbUpload(quote_json)
                 postInsta(quote_json)
                 threadsPost(quote_json)
