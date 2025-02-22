@@ -41,7 +41,7 @@ jobs:
               print('Error: JSON_OAUTH environment variable is not set.')
               exit(1)
       
-          print(f'Client secrets from JSON_OAUTH: {client_secrets[:100]}')  # Print first 100 chars for debugging
+          
       
           # Parse the secret into a JSON object
           client_secrets_dict = json.loads(client_secrets)
@@ -65,7 +65,7 @@ jobs:
         client_secrets = os.getenv('JSON_OAUTH_MAIN')
         
         # Debugging: Check if client_secrets is set
-        print(f'Client secrets from JSON_OAUTH_MAIN: {client_secrets[:100]}')  # Print first 100 chars for debugging
+        
         
         if not client_secrets:
             exit('Error: JSON_OAUTH_MAIN is not set.')
@@ -113,6 +113,7 @@ jobs:
         GPASS: ${{ secrets.GPASS }}
         MAIL: ${{ secrets.MAIL }}
         SERVICE_ACCOUNT_EMAIL : ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+        ACCESS_TOKEN_DROP_BOX : ${{ secrets.ACCESS_TOKEN_DROP_BOX }}
       run: |
         python main.py
 

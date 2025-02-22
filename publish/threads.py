@@ -2,6 +2,8 @@ import requests
 import time
 import os
 from alerts.mail import sendMail
+from drop_box.upload import upload_file
+from drop_box.delete import delete_file
 
 threads_account_id = os.getenv("THREADS_PAGE_ID")
 THREAD_VERSION = os.getenv("THREAD_VERSION")
@@ -89,9 +91,9 @@ def publish_container(creation_id, access_token, threads_account_id):
 # Example usage
 access_token = os.getenv("THREADS_TOKEN")  # Replace with your valid access token
 media_type = 'VIDEO'  # 'VIDEO' for video posts
-video_url = r'output_video.mp4'  # Replace with your valid video URL
 
 def threadsPost(quote_data):
+    video_url = upload_file()
     # Step 1: Post the reel (video)
     caption = f"✨ {quote_data['title']} ✨\n\n{quote_data['quote']}\n\n{quote_data['description']}\n\n#{' #'.join(quote_data['tags'])}\n#Inspiration #Motivation"
     response = post_reel(caption=caption, media_type=media_type, video_url=video_url, access_token=access_token,threads_account_id=threads_account_id)
@@ -108,10 +110,13 @@ def threadsPost(quote_data):
                 # Step 3: Publish the media after it's ready
                 publish_response = publish_container(creation_id, access_token, threads_account_id)
                 print("Published to threads Sucessfully")
+                delete_file()
             else:
                 sendMail(None,"Failed to upload to Threads : Threads : 112")
                 print("Failed to upload")
+                delete_file()
     else:
         sendMail(None,"Failed to upload to Threads : 115")
         print("Failed to upload the media.")
+        delete_file()
     
