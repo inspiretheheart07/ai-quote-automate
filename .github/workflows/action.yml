@@ -1,0 +1,128 @@
+name: Python CI
+
+on:
+  schedule:
+    - cron: "0 0,4,8,12,16,20 * * *"  # Runs at 00:00, 04:00, 08:00, 12:00, 16:00, and 20:00 UTC every day
+    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
+    
+    - name: Install FFmpeg
+      run: sudo apt-get install -y ffmpeg
+  
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -U google-generativeai
+        
+    - name: Format and save client_secrets.json
+      run: |
+          python -c "
+          import json
+          import os
+      
+          # Load the client secrets from the GitHub secret (stored in JSON_OAUTH)
+          client_secrets = os.getenv('JSON_OAUTH')
+          
+          # Debugging: Check if client_secrets is set
+          if client_secrets is None:
+              print('Error: JSON_OAUTH environment variable is not set.')
+              exit(1)
+      
+          
+      
+          # Parse the secret into a JSON object
+          client_secrets_dict = json.loads(client_secrets)
+      
+          # Re-encode the JSON object with double quotes
+          with open('client_secrets.json', 'w') as f:
+              json.dump(client_secrets_dict, f, indent=2)
+      
+          print('client_secrets.json successfully written')"
+      env:
+          JSON_OAUTH: ${{ secrets.JSON_OAUTH }}  # Pass the secret here
+      
+    
+    - name: Format and save oauth.json
+      run: |
+        python -c "
+        import json
+        import os
+
+        # Load the client secrets from the GitHub secret (stored in JSON_OAUTH_MAIN)
+        client_secrets = os.getenv('JSON_OAUTH_MAIN')
+        
+        # Debugging: Check if client_secrets is set
+        
+        
+        if not client_secrets:
+            exit('Error: JSON_OAUTH_MAIN is not set.')
+
+        # Parse the secret into a JSON object
+        client_secrets_dict = json.loads(client_secrets)
+
+        # Re-encode the JSON object with double quotes
+        with open('oauth.json', 'w') as f:
+            json.dump(client_secrets_dict, f, indent=2)
+
+        print('oauth.json successfully written')"
+      env:
+          JSON_OAUTH_MAIN: ${{ secrets.JSON_OAUTH_MAIN }}  # Pass the secret here
+
+    - name: Run script
+      env:
+        JSON_OAUTH_MAIN: ${{ secrets.JSON_OAUTH_MAIN }}  # Pass the secret here
+        GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
+        GOOGLE_YT_API_KEY: ${{ secrets.GOOGLE_YT_API_KEY }}
+        FILE_PATH: "output_video.mp4"
+        TITLE: "Test Video"
+        DESCRIPTION: "This is a test video uploaded via GitHub Actions"
+        CATEGORY: "22"  # Example category ID
+        KEYWORDS: "example, test, github"
+        PRIVACY_STATUS: "public"
+        FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }} 
+        FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }} 
+        FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }} 
+        FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }} 
+        FACEBOOK_API_VERSION: ${{ secrets.FACEBOOK_API_VERSION }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        GCP_WORKLOAD_IDENTITY_POOL : ${{ secrets.GCP_WORKLOAD_IDENTITY_POOL }}
+        GCP_WORKLOAD_IDENTITY_PROVIDER : ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        GOOGLE_API_KEY : ${{ secrets.GOOGLE_API_KEY }}
+        GOOGLE_API_KEY_DRIVE : ${{ secrets.GOOGLE_API_KEY_DRIVE }}
+        INSTA_PAGE_ID : ${{ secrets.INSTA_PAGE_ID }}
+        JSON_OAUTH : ${{ secrets.JSON_OAUTH }}
+        GOOGLE_CREDENTIALS : ${{ secrets.GOOGLE_CREDENTIALS }}
+        THREADS_PAGE_ID : ${{ secrets.THREADS_PAGE_ID }}
+        THREADS_TOKEN : ${{ secrets.THREADS_TOKEN }}
+        THREAD_VERSION : ${{ secrets.THREAD_VERSION }}
+        GPASS: ${{ secrets.GPASS }}
+        MAIL: ${{ secrets.MAIL }}
+        SERVICE_ACCOUNT_EMAIL : ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+        ACCESS_TOKEN_DROP_BOX : ${{ secrets.ACCESS_TOKEN_DROP_BOX }}
+      run: |
+        python main.py
+
+    - name: Upload downloaded files as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: downloaded-files
+        path: |
+            output_video.mp4
+            output_video_converted.mp4
+

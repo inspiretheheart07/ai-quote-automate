@@ -2,10 +2,10 @@ import os
 import random
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from moviepy.editor import *  # for video creation
-from PIL import Image, ImageDraw, ImageFont
+from moviepy import *  # for video creation
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import requests
-
+import imghdr
 
 # Authenticate using API Key
 def authenticate_google_drive(api_key):
@@ -13,14 +13,26 @@ def authenticate_google_drive(api_key):
     service = build('drive', 'v3', developerKey=api_key)
     return service
 
-
-# Download file from Google Drive using file ID
-def download_file_from_drive(file_id, destination_path, api_key):
+# Alternative function to download file using requests
+def download_file_with_requests(file_id, destination_path, api_key):
     service = authenticate_google_drive(api_key)
+    
+    # Get the download URL
     request = service.files().get_media(fileId=file_id)
-    with open(destination_path, 'wb') as f:
-        request.execute()
-
+    request_uri = request.uri
+    
+    # Make the request using requests library to fetch the file
+    response = requests.get(request_uri, headers={'Authorization': f'Bearer {api_key}'}, stream=True)
+    print(f"Successfully downloaded file to {request_uri}")
+    if response.status_code == 200:
+        with open(destination_path, 'wb') as file:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    file.write(chunk)
+        print(f"Successfully downloaded file to {destination_path}")
+    else:
+        print(f"Error: Could not download file (status code: {response.status_code})")
+        raise Exception(f"Failed to download file {file_id}")
 
 # Upload file to Google Drive
 def upload_file_to_drive(file_path, drive_folder_id, api_key):
@@ -34,7 +46,6 @@ def upload_file_to_drive(file_path, drive_folder_id, api_key):
     
     file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
     return file.get('id')
-
 
 # Function to wrap text into multiple lines if necessary
 def wrap_text(draw, text, font, max_width):
@@ -59,10 +70,15 @@ def wrap_text(draw, text, font, max_width):
     
     return lines
 
-
 # Function to convert text to image with background and shadow
 def text_on_background(text, background_image_path, font_path, output_image_path='/tmp/output_image.png', line_height=15, shadow_offset=(5, 5)):
-    image = Image.open(background_image_path)
+    try:
+        image = Image.open(background_image_path)
+        image.verify()  # Verify that the image is valid
+        print(f"Image {background_image_path} is valid.")
+    except Exception as e:
+        print(f"Error opening image {background_image_path}: {e}")
+        raise
     
     if image.mode != 'RGB':
         image = image.convert('RGB')
@@ -122,7 +138,6 @@ def text_on_background(text, background_image_path, font_path, output_image_path
 
     return output_image_path
 
-
 # Function to create a video from image and music
 def create_video_from_image_and_music(image_path, music_folder, output_video_path):
     music_files = [f"{music_folder}/{i}.mp3" for i in range(1, 12)]
@@ -141,7 +156,6 @@ def create_video_from_image_and_music(image_path, music_folder, output_video_pat
 
     return output_video_path
 
-
 # Example usage
 
 # Define your Google API Key here
@@ -149,26 +163,46 @@ api_key = os.getenv('GCP_API_KEY')
 
 # Download the background image (bg.png) from Google Drive
 bg_image_file_id = '1mUohoXSVJPlrF4U0TUxztOnBo2saoTZv'  # Replace with the file ID of your background image in Google Drive
-bg_image_path = '/tmp/bg.png'
-download_file_from_drive(bg_image_file_id, bg_image_path, api_key)
+bg_image_path = '/tmp/tmp92xrigtk/bg.png'
+
+# Use the alternative download method
+try:
+    download_file_with_requests(bg_image_file_id, bg_image_path, api_key)
+except Exception as e:
+    print(f"Failed to download background image: {e}")
 
 # Download the font (font.ttf) from Google Drive
 font_file_id = '1UKJRvJfEomWjImvRCA9K5rywnvYWs7Rf'  # Replace with the file ID of your font in Google Drive
-font_path = '/tmp/font.ttf'
-download_file_from_drive(font_file_id, font_path, api_key)
+font_path = '/tmp/tmp92xrigtk/font.ttf'
+
+# Use the alternative download method for font file
+try:
+    download_file_with_requests(font_file_id, font_path, api_key)
+except Exception as e:
+    print(f"Failed to download font file: {e}")
 
 # Text to overlay
 text = "Inspiring Quote: 'The best way to predict the future is to create it.'"
 
 # Generate an image with text overlay
-output_image_path = text_on_background(text, bg_image_path, font_path, line_height=20, shadow_offset=(5, 0))
+output_image_path = '/tmp/tmp92xrigtk/output_image.png'
+try:
+    output_image_path = text_on_background(text, bg_image_path, font_path, output_image_path, line_height=20, shadow_offset=(5, 0))
+except Exception as e:
+    print(f"Failed to generate image: {e}")
 
 # Create a 55-second video with the image and a random music track
-output_video_path = '/tmp/output_video.mp4'
+output_video_path = '/tmp/tmp92xrigtk/output_video.mp4'
 music_folder = '/path/to/music/calm'  # Path to the folder with music files (e.g., calm folder in current folder)
-create_video_from_image_and_music(output_image_path, music_folder, output_video_path)
+try:
+    create_video_from_image_and_music(output_image_path, music_folder, output_video_path)
+except Exception as e:
+    print(f"Failed to create video: {e}")
 
 # Upload the video to Google Drive (replace with the correct folder ID)
 drive_folder_id = '1-MvD1EumX_yChVWGhH6k34AAAP6REDhc'  # Replace with the correct folder ID in Google Drive
-uploaded_video_id = upload_file_to_drive(output_video_path, drive_folder_id, api_key)
-print(f"Video uploaded with ID: {uploaded_video_id}")
+try:
+    uploaded_video_id = upload_file_to_drive(output_video_path, drive_folder_id, api_key)
+    print(f"Video uploaded with ID: {uploaded_video_id}")
+except Exception as e:
+    print(f"Failed to upload video: {e}")

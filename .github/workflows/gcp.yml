@@ -1,7 +1,7 @@
 name: Run Python Script
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
@@ -16,6 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Install ffmpeg
+      - name: Install ffmpeg
+        run: |
+         sudo apt update
+         sudo apt install -y ffmpeg
+         
       - name: Authenticate with Google Cloud (Workload Identity Federation)
         id: auth
         uses: google-github-actions/auth@v2
@@ -54,9 +60,11 @@ jobs:
             pip install Pillow
             pip install numpy
             pip install moviepy
+            pip install requests
             pip install google-api-python-client  
             pip install google-auth-httplib2
-            pip install google-auth-oauthlib
+            pip install google-auth-oauthlib  
+            pip install imageio[ffmpeg]
             pip list  
             
       - name: Create Image Using Bg
