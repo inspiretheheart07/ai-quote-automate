@@ -1,5 +1,6 @@
 import os
 import requests
+from alerts.mail import sendMail
 
 def initialize_upload_session(page_id, page_access_token, file_size):
     """
@@ -21,6 +22,7 @@ def initialize_upload_session(page_id, page_access_token, file_size):
         return video_id, upload_url
     else:
         print(f"Error initializing upload session: {response.text}")
+        sendMail(None,response.text)
 
 
 def finalize_upload(page_id, page_access_token, video_id, video_file_path):
@@ -46,16 +48,17 @@ def finalize_upload(page_id, page_access_token, video_id, video_file_path):
         return True
     else:
         print(f"Error finalizing upload: {response.text}")
+        sendMail(None,response.text)
         return False
     
-def publishReel(page_id, page_access_token, video_id):
+def publishReel(page_id, page_access_token, video_id,quote_data):
     finish_url = f"https://graph.facebook.com/{FACEBOOK_API_VERSION}/{page_id}/video_reels"
     params = {
     "access_token": page_access_token,
     "video_id": video_id,
     "upload_phase": "finish",
     "video_state": "PUBLISHED",  # You can set the state to PUBLISHED
-    "description": 'description',  # Your custom description for the video
+    "description": f"✨ {quote_data['title']} ✨\n\n{quote_data['quote']}\n\n{quote_data['description']}\n\n#{' #'.join(quote_data['tags'])}\n#Inspiration #Motivation",  # Your custom description for the video
     }
     
     # Send the POST request to finish the upload and publish the video
@@ -68,6 +71,7 @@ def publishReel(page_id, page_access_token, video_id):
     else:
         print(f"Failed to publish video. Status code: {response.status_code}")
         print("Response:", response.text)
+        sendMail(None,response.text)
 
 
 # Example usage
@@ -77,7 +81,7 @@ page_access_token = os.getenv("FACEBOOK_PAGE_ACCESS_TOKEN")
 FACEBOOK_API_VERSION = os.getenv("FACEBOOK_API_VERSION") 
 
 
-def fbUpload():
+def fbUpload(quote):
     video_file_path = 'output_video.mp4'
     file_size = os.path.getsize(video_file_path)
     # Step 1: Initialize the upload session
@@ -85,5 +89,5 @@ def fbUpload():
     if video_id and upload_url:
        upload =  finalize_upload(page_id, page_access_token, video_id, video_file_path)
        if upload:
-           publishReel(page_id, page_access_token, video_id)
+           publishReel(page_id, page_access_token, video_id,quote)
     

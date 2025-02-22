@@ -8,3 +8,5 @@ oauth2client
 facebook_business
 ffmpeg-python
 subprocess.run
+smtplib
+email

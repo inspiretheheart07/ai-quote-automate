@@ -15,6 +15,8 @@ from googleapiclient.errors import HttpError
 import http.client
 import random
 import time
+from alerts.mail import sendMail
+
 
 YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload"
 YOUTUBE_API_SERVICE_NAME = "youtube"
@@ -27,14 +29,14 @@ RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, http.client.NotConnecte
   http.client.ResponseNotReady, http.client.BadStatusLine)
 MAX_RETRIES = 10
 
-def initialize_upload(Vfile,Vtitle,Vdesc) :
+def initialize_upload(Vfile,Vtitle,Vdesc,Vtags) :
     yt = get_service(YOUTUBE_UPLOAD_SCOPE,YOUTUBE_API_SERVICE_NAME)
 
     body = dict(
         snippet=dict(
             title=Vtitle,
             description=Vdesc,
-            tags=['video1','video3'],
+            tags=Vtags,
             categoryId=22
         ),
         status=dict(
@@ -63,14 +65,17 @@ def resumable_upload(insert_request) :
                 if 'id' in response:
                     print("Video id '%s' was successfully uploaded." % response['id'])
                 else:
+                    sendMail(None,response)
                     exit("The upload failed with an unexpected response: %s" % response)
         except HttpError as e:  # updated exception handling
             if e.resp.status in RETRIABLE_STATUS_CODES:
+                sendMail(None,e)
                 error = "A retriable HTTP error %d occurred:\n%s" % (e.resp.status,
                                                                      e.content)
             else:
                 raise
         except RETRIABLE_EXCEPTIONS as e:  # updated exception handling
+            sendMail(None,e)
             error = "A retriable error occurred: %s" % e
 
         if error is not None:

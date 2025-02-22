@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -97,6 +97,22 @@ jobs:
         FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }} 
         FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }} 
         FACEBOOK_API_VERSION: ${{ secrets.FACEBOOK_API_VERSION }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        GCP_WORKLOAD_IDENTITY_POOL : ${{ secrets.GCP_WORKLOAD_IDENTITY_POOL }}
+        GCP_WORKLOAD_IDENTITY_PROVIDER : ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        GOOGLE_API_KEY : ${{ secrets.GOOGLE_API_KEY }}
+        GOOGLE_API_KEY_DRIVE : ${{ secrets.GOOGLE_API_KEY_DRIVE }}
+        INSTA_PAGE_ID : ${{ secrets.INSTA_PAGE_ID }}
+        JSON_OAUTH : ${{ secrets.JSON_OAUTH }}
+        GOOGLE_CREDENTIALS : ${{ secrets.GOOGLE_CREDENTIALS }}
+        THREADS_PAGE_ID : ${{ secrets.THREADS_PAGE_ID }}
+        THREADS_TOKEN : ${{ secrets.THREADS_TOKEN }}
+        THREAD_VERSION : ${{ secrets.THREAD_VERSION }}
+        GPASS: ${{ secrets.GPASS }}
+        MAIL: ${{ secrets.MAIL }}
+        SERVICE_ACCOUNT_EMAIL : ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
       run: |
         python main.py
 
