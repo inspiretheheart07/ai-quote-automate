@@ -65,17 +65,17 @@ def resumable_upload(insert_request) :
                 if 'id' in response:
                     print("Video id '%s' was successfully uploaded." % response['id'])
                 else:
-                    sendMail(None,response)
+                    sendMail(None,"The upload failed with an unexpected response : YT : 68" )
                     exit("The upload failed with an unexpected response: %s" % response)
         except HttpError as e:  # updated exception handling
             if e.resp.status in RETRIABLE_STATUS_CODES:
-                sendMail(None,e)
+                sendMail(None,"A retriable HTTP error %d occurred:\n%s : YT : 72")
                 error = "A retriable HTTP error %d occurred:\n%s" % (e.resp.status,
                                                                      e.content)
             else:
                 raise
         except RETRIABLE_EXCEPTIONS as e:  # updated exception handling
-            sendMail(None,e)
+            sendMail(None,"A retriable error occurred: %s :  YT : 78")
             error = "A retriable error occurred: %s" % e
 
         if error is not None:

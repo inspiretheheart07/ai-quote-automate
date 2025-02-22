@@ -22,7 +22,7 @@ def initialize_upload_session(page_id, page_access_token, file_size):
         return video_id, upload_url
     else:
         print(f"Error initializing upload session: {response.text}")
-        sendMail(None,response.text)
+        sendMail(None,f"Error initializing upload session: {response.text} : Facebook : 25")
 
 
 def finalize_upload(page_id, page_access_token, video_id, video_file_path):
@@ -41,14 +41,12 @@ def finalize_upload(page_id, page_access_token, video_id, video_file_path):
     # Open and upload the file using the `data-binary` equivalent in requests
     with open(video_file_path, "rb") as video_file:
         response = requests.post(upload_url, headers=headers, data=video_file)
-
-    print("Response JSON:", response.json())    
     if response.status_code == 200:
         print("Upload finalized successfully!")
         return True
     else:
         print(f"Error finalizing upload: {response.text}")
-        sendMail(None,response.text)
+        sendMail(None,f"Error finalizing upload: {response.text} : Facebook  : 51")
         return False
     
 def publishReel(page_id, page_access_token, video_id,quote_data):
@@ -67,11 +65,10 @@ def publishReel(page_id, page_access_token, video_id,quote_data):
     # Check the response
     if response.status_code == 200:
         print("Video published successfully!")
-        print("Response:", response.json())
     else:
         print(f"Failed to publish video. Status code: {response.status_code}")
         print("Response:", response.text)
-        sendMail(None,response.text)
+        sendMail(None,f"Failed to publish video. Status code: {response.status_code} : Facebook : 74")
 
 
 # Example usage

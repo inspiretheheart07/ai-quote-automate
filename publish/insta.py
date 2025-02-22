@@ -31,7 +31,7 @@ def post_reel(caption='', media_type='', share_to_feed='TRUE', thumb_offset='0',
     else:
         print(f"Error uploading media: {response.status_code}")
         print(response.content)
-        sendMail(None,response)
+        sendMail(None,f"Error uploading media: {response.status_code} : Instagram : 34")
         return None
 
 
@@ -51,14 +51,12 @@ def finalize_upload(page_id, page_access_token, video_id, video_file_path):
     # Open and upload the file using the `data-binary` equivalent in requests
     with open(video_file_path, "rb") as video_file:
         response = requests.post(upload_url, headers=headers, data=video_file)
-
-    print("Response JSON:", response.json())    
     if response.status_code == 200:
         print("Upload finalized successfully!")
         return True
     else:
         print(f"Error finalizing upload: {response.text}")
-        sendMail(None,response)
+        sendMail(None,f"Error finalizing upload: {response.text} : Instagram : 61")
         return False
     
 
@@ -88,7 +86,7 @@ def publish_container(creation_id='', access_token='', instagram_account_id=''):
     else:
         print(f"Error publishing media: {response.status_code}")
         print(response.content)  # Print detailed response content for debugging
-        sendMail(None,response)
+        sendMail(None,f"Error publishing media: {response.status_code} : Instagram : 91")
         return None
 
 
@@ -113,7 +111,7 @@ def postInsta(quote_data) :
         # Step 3: If upload is finished, publish the media
         if upload_status :
             publish_response = publish_container(creation_id, access_token,instagram_account_id)
-            print("Publish Response:", publish_response)
+            print("Publish to Insta sucessfullt")
     else:
         print("Failed to upload the media.")
         sendMail(None,"Insta upload Failed")

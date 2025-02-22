@@ -69,7 +69,7 @@ def genererateQuoteEnglish():
         if not response.text:
             print("Error: Gemini model returned an empty response.")
             print("Raw Response:", response)
-            sendMail(None,response)
+            sendMail(None,"Error: Gemini model returned an empty response : generateQuoteEnglish : 72")
             raise ValueError("Empty response from Gemini model.")
     
         data = json.loads(response.text)
@@ -108,17 +108,17 @@ def genererateQuoteEnglish():
         else:
             print("Invalid JSON structure.")
             print("Response Text:", response.text)
-            sendMail(None,response.text)
+            sendMail(None,"Invalid JSON structure : generateQuoteEnglish : 111")
     
     except json.JSONDecodeError as e:
-        print(f"Error: Could not parse JSON response. Error: {e}")
+        print(f"Error: Could not parse JSON response. Error: {e} : generateQuoteEnglish : 114")
         sendMail(None,e)
     except AttributeError:
         print("Error: Could not extract quote from response. Check the model output.")
-        sendMail(None,'Error')
+        sendMail(None,'Error: Could not extract quote from response. Check the model output. : generateQuoteEnglish : 118')
     except ValueError as ve:
         print(f"ValueError: {ve}")
-        sendMail(None,ve)
+        sendMail(None,f"{ve} : generateQuoteEnglish : 121")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        sendMail(None,e)
+        sendMail(None,f"An unexpected error occurred: {e} : generateQuoteEnglish : 123")

@@ -30,7 +30,7 @@ def post_reel(caption='', media_type='', video_url='', access_token='', threads_
     else:
         print(f"Error uploading media: {response.status_code}")
         print(response.content)
-        sendMail(None,response)
+        sendMail(None,f"Error uploading media: {response.status_code} : Threads : 33")
         return None
 
 
@@ -48,7 +48,7 @@ def check_upload_status(creation_id, access_token, threads_account_id):
         status = status_data.get("status")
         if status == "ERROR" :
             print("Media Failed")
-            sendMail(None,response)
+            sendMail(None,"uploaded media Failed : Threads 51")
             return status
         elif status == "FINISHED":  # The media is ready to be published
             print("Media is ready to be published.")
@@ -82,7 +82,7 @@ def publish_container(creation_id, access_token, threads_account_id):
     else:
         print(f"Error publishing media: {response.status_code}")
         print(response.content)  # Print detailed response content for debugging
-        sendMail(None,response)
+        sendMail(None,f"Error publishing media: {response.status_code} : Threads : 85")
         return None
 
 
@@ -107,11 +107,11 @@ def threadsPost(quote_data):
             if check_upload_status(creation_id, access_token, threads_account_id) == "FINISHED" :
                 # Step 3: Publish the media after it's ready
                 publish_response = publish_container(creation_id, access_token, threads_account_id)
-                print("Publish Response:", publish_response)
+                print("Published to threads Sucessfully")
             else:
-                sendMail(None,"Failed to upload to Threads")
+                sendMail(None,"Failed to upload to Threads : Threads : 112")
                 print("Failed to upload")
     else:
-        sendMail(None,"Failed to upload to Threads")
+        sendMail(None,"Failed to upload to Threads : 115")
         print("Failed to upload the media.")
     
