@@ -22,7 +22,7 @@ def sendMail(subject='AI QUOTE : Failed',body='') :
     message["Subject"] = subject
     
     # Add body to email
-    message.attach(MIMEText(body, "plain"))
+    message.attach(MIMEText(body.as_string(), "plain"))
     
     # Connect to the Gmail SMTP server
     try:
