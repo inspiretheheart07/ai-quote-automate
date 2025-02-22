@@ -17,7 +17,7 @@ def run():
     quote_json = genererateQuoteEnglish()
     if quote_json:
         download_files(scopes=DRIVE_SCOPE,files_to_download=files_to_download)
-        uploaded_image = text_on_background(quote_json.quote, 'bg.png', 'font.ttf', 'output_image.png')
+        uploaded_image = text_on_background(quote_json["quote"] , 'bg.png', 'font.ttf', 'output_image.png')
         if uploaded_image:
             video_path = create_video_with_music(uploaded_image, music_file)
             if video_path:
