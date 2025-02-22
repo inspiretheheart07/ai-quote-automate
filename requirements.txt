@@ -2,7 +2,6 @@ google-auth==2.17.0
 google-auth-oauthlib==0.5.2
 google-auth-httplib2==0.1.0
 google-api-python-client==2.77.0
-google.generativeai==0.8.4
 moviepy==1.0.3
 Pillow==9.0.1
 oauth2client
