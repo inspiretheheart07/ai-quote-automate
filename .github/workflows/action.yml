@@ -1,6 +1,10 @@
 name: Python CI
 
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
   schedule:
     - cron: "0 0,4,8,12,16,20 * * *"  # Runs at 00:00, 04:00, 08:00, 12:00, 16:00, and 20:00 UTC every day
