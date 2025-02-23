@@ -7,4 +7,3 @@ Pillow==9.0.1
 oauth2client
 facebook_business
 boto3
-asyncio
