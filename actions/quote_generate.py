@@ -106,7 +106,7 @@ def genererateQuoteEnglish():
             max_output_tokens=500,
             temperature=0.9
         ))
-    
+        print("Raw Response:", response)
         if not response.text:
             print("Error: Gemini model returned an empty response.")
             print("Raw Response:", response)
@@ -164,13 +164,13 @@ def genererateQuoteEnglish():
     
     except json.JSONDecodeError as e:
         print(f"Error: Could not parse JSON response. Error: {e} : generateQuoteEnglish : 114")
-        sendMail(None,e)
+        sendMail(None,"Could not parse JSON response")
     except AttributeError:
         print("Error: Could not extract quote from response. Check the model output.")
         sendMail(None,'Error: Could not extract quote from response. Check the model output. : generateQuoteEnglish : 118')
     except ValueError as ve:
         print(f"ValueError: {ve}")
-        sendMail(None,f"{ve} : generateQuoteEnglish : 121")
+        sendMail(None,f"{'ValueError'} : generateQuoteEnglish : 121")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        sendMail(None,f"An unexpected error occurred: {e} : generateQuoteEnglish : 123")
+        sendMail(None,"An unexpected error occurred : generateQuoteEnglish : 123")
