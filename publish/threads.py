@@ -20,7 +20,7 @@ def post_reel(caption='', media_type='', video_url='', access_token='', threads_
     param['access_token'] = access_token
     param['media_type'] = media_type 
     param['video_url'] = video_url
-    param['text'] = caption  # 'text' key for caption
+    param['text'] = caption[:400]  # 'text' key for caption
 
 
     response = requests.post(url, params=param)
