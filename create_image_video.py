@@ -5,7 +5,6 @@ from googleapiclient.http import MediaFileUpload
 from moviepy import *  # for video creation
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import requests
-import imghdr
 
 # Authenticate using API Key
 def authenticate_google_drive(api_key):

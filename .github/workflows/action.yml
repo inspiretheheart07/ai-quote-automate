@@ -15,8 +15,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v3   
+
+    - name: Get System Information
+      run: |
+        echo "Operating System and Architecture Information:"
+        uname -a  # Print full system information
+        echo "OS Version Details:"
+        cat /etc/os-release  # Print OS release information
+        echo "CPU Architecture:"
+        lscpu  # Print CPU architecture details
+        echo "Memory Information:"
+        free -h  # Print memory details
+        echo "Disk Space Information:"
+        df -h  # Print disk space information
+        echo "Environment Variables:"
+        printenv  # Print all environment variables
+        echo "Available CPUs:"
+        nproc  # Number of available CPU cores
 
     - name: Set up Python 3.9
       uses: actions/setup-python@v5
