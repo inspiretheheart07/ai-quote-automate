@@ -7,11 +7,24 @@ from publish.yt import initialize_upload
 from publish.fb import fbUpload
 from publish.insta import postInsta
 from publish.threads import threadsPost
+import asyncio
 
 DRIVE_SCOPE = ['https://www.googleapis.com/auth/drive']
 YT_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
 music_file = f"{random.randint(1, 11)}.mp3"
 files_to_download = [music_file, 'font.ttf', 'bg.png']
+
+
+async def upload_to_platforms(quote_json, video_path):
+    # Initialize all upload functions to run concurrently
+    tasks = [
+        asyncio.create_task(initialize_upload("output_video.mp4", quote_json["title"], '', quote_json["tags"])),
+        asyncio.create_task(fbUpload(quote_json)),
+        asyncio.create_task(postInsta(quote_json)),
+        asyncio.create_task(threadsPost(quote_json))
+    ]
+    await asyncio.gather(*tasks)
+
 
 def run():
     quote_json = genererateQuoteEnglish()
@@ -21,10 +34,7 @@ def run():
         if uploaded_image:
             video_path = create_video_with_music(uploaded_image, music_file)
             if video_path:
-                initialize_upload("output_video.mp4", quote_json["title"], '',quote_json["tags"])
-                fbUpload(quote_json)
-                postInsta(quote_json)
-                threadsPost(quote_json)
+                asyncio.run(upload_to_platforms(quote_json, video_path))
 
 if __name__ == "__main__":
     run()
