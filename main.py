@@ -7,7 +7,6 @@ from publish.yt import initialize_upload
 from publish.fb import fbUpload
 from publish.insta import postInsta
 from publish.threads import threadsPost
-from drop_box.delete import delete_file
 
 DRIVE_SCOPE = ['https://www.googleapis.com/auth/drive']
 YT_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
@@ -26,7 +25,6 @@ def run():
                 fbUpload(quote_json)
                 postInsta(quote_json)
                 threadsPost(quote_json)
-                delete_file()
 
 if __name__ == "__main__":
     run()

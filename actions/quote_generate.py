@@ -84,7 +84,7 @@ def genererateQuoteEnglish():
     Use the following JSON schema:
     {{
         "quote": "A new and unique inspiring, wise,heart break, betrayal, revenge, karma, comeback, heart-touching quote from a diffent authors. (string)",
-        "title": "A short title that captures the essence of the quote. (string)",
+        "title": "A short title that captures the essence of the quote with 90 charcaters or 90 tokens which ever less. (string)",
         "description": "A brief description explaining the meaning of the quote. (string)",
         "tags": ["A list of 10-25 relevant tags. (array of strings)"]
     }}
