@@ -35,7 +35,7 @@ def initialize_upload(Vfile,Vtitle,Vdesc,Vtags) :
     body = dict(
         snippet=dict(
             title=Vtitle,
-            description='Vdesc',
+            description=Vdesc[:200],
             tags=Vtags,
             categoryId=22
         ),

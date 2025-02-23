@@ -18,10 +18,10 @@ files_to_download = [music_file, 'font.ttf', 'bg.png']
 async def upload_to_platforms(quote_json, video_path):
     # Initialize all upload functions to run concurrently
     tasks = [
-        asyncio.create_task(initialize_upload("output_video.mp4", quote_json["title"], '', quote_json["tags"])),
-        asyncio.create_task(fbUpload(quote_json)),
-        asyncio.create_task(postInsta(quote_json)),
-        asyncio.create_task(threadsPost(quote_json))
+        asyncio.to_thread(initialize_upload("output_video.mp4", quote_json["title"], quote_json["description"], quote_json["tags"])),
+        asyncio.to_thread(fbUpload(quote_json)),
+        asyncio.to_thread(postInsta(quote_json)),
+        asyncio.to_thread(threadsPost(quote_json))
     ]
     await asyncio.gather(*tasks)
 
