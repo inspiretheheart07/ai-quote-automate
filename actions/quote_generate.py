@@ -104,7 +104,7 @@ def genererateQuoteEnglish():
     try:
         response = model.generate_content(prompt, generation_config=types.GenerationConfig(
             max_output_tokens=500,
-            temperature=0.7
+            temperature=0.9
         ))
     
         if not response.text:
@@ -121,6 +121,17 @@ def genererateQuoteEnglish():
             title = data["title"]
             description = data["description"]
             tags = data["tags"]
+            # Join tags into a single string with a separator (e.g., comma)
+            joined_tags = ",".join(data["tags"])
+            
+            # Ensure the length of the joined tags is no more than 500 characters
+            if len(joined_tags) > 500:
+                # If it's too long, truncate it to 500 characters, ensuring the last tag is not cut off mid-way
+                joined_tags = joined_tags[:489]
+            
+            # Assign the modified string back to the tags field (if necessary)
+            data["tags"] = joined_tags.split(",")  # Optional: split back into list if needed
+            tags =data["tags"]
     
             # Extract the author from the quote
             author = None
@@ -142,7 +153,7 @@ def genererateQuoteEnglish():
     
             with open("quote_data.json", "w", encoding="utf-8") as f:
                 data["quote"] = quote
-                data["title"] = new_title
+                data["title"] = new_title[:99] 
                 json.dump(data, f, indent=4, ensure_ascii=False)
             print("Quote data saved to quote_data.json")
             return data
