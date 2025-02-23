@@ -111,7 +111,7 @@ def postInsta(quote_data) :
         # Step 3: If upload is finished, publish the media
         if upload_status :
             publish_response = publish_container(creation_id, access_token,instagram_account_id)
-            print("Publish to Insta sucessfullt")
+            print("Publish to Insta sucessfull")
     else:
         print("Failed to upload the media.")
         sendMail(None,"Insta upload Failed")
