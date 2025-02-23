@@ -139,12 +139,3 @@ jobs:
         AWS_SECRET_ACCESS_KEY : ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         python main.py
-
-    - name: Upload downloaded files as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: downloaded-files
-        path: |
-            output_video.mp4
-            output_video_converted.mp4
-
