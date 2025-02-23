@@ -6,4 +6,4 @@ moviepy==1.0.3
 Pillow==9.0.1
 oauth2client
 facebook_business
-dropbox
+boto3

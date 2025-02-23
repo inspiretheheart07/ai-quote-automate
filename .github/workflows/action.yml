@@ -1,6 +1,7 @@
 name: Python CI
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 0,4,8,12,16,20 * * *"  # Runs at 00:00, 04:00, 08:00, 12:00, 16:00, and 20:00 UTC every day
     
@@ -108,7 +109,11 @@ jobs:
         GPASS: ${{ secrets.GPASS }}
         MAIL: ${{ secrets.MAIL }}
         SERVICE_ACCOUNT_EMAIL : ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-        ACCESS_TOKEN_DROP_BOX : ${{ secrets.ACCESS_TOKEN_DROP_BOX }}
+        AWS_ACCESS_KEY_ID : ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_DEFAULT_BUCKET : ${{ secrets.AWS_DEFAULT_BUCKET }}
+        AWS_DEFAULT_REGION : ${{ secrets.AWS_DEFAULT_REGION }}
+        AWS_FILE_S3_UPLOAD : ${{ secrets.AWS_FILE_S3_UPLOAD }}
+        AWS_SECRET_ACCESS_KEY : ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         python main.py
 
