@@ -103,8 +103,8 @@ def genererateQuoteEnglish():
     
     try:
         response = model.generate_content(prompt, generation_config=types.GenerationConfig(
-            max_output_tokens=500,
-            temperature=0.9
+            max_output_tokens=800,
+            temperature=0.8
         ))
         print("Raw Response:", response)
         if not response.text:

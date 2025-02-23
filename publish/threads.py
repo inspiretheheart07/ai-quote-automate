@@ -107,15 +107,15 @@ def threadsPost(quote_data):
         while  check_upload_status(creation_id, access_token, threads_account_id) == "IN_PROGRESS" :
             print("Waiting for media to be processed...")
             time.sleep(5)  # Wait 30 seconds before checking the status again
-            if check_upload_status(creation_id, access_token, threads_account_id) == "FINISHED" :
-                # Step 3: Publish the media after it's ready
-                publish_response = publish_container(creation_id, access_token, threads_account_id)
-                print("Published to threads Sucessfully")
-                # delete_file()
-            else:
-                sendMail(None,"Failed to upload to Threads : Threads : 112")
-                print("Failed to upload")
-                # delete_file()
+        if check_upload_status(creation_id, access_token, threads_account_id) == "FINISHED" :
+            # Step 3: Publish the media after it's ready
+            publish_response = publish_container(creation_id, access_token, threads_account_id)
+            print("Published to threads Sucessfully")
+            # delete_file()
+        else:
+            sendMail(None,"Failed to upload to Threads : Threads : 112")
+            print("Failed to upload")
+            # delete_file()
     else:
         sendMail(None,"Failed to upload to Threads : 115")
         print("Failed to upload the media.")
