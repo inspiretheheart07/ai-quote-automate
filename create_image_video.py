@@ -151,7 +151,7 @@ def create_video_from_image_and_music(image_path, music_folder, output_video_pat
     video = image_clip.set_audio(audio)
     video = video.set_fps(24)
 
-    video.write_videofile(output_video_path, codec='libx264', audio_codec='aac')
+    video.write_videofile(output_video_path, codec='libx264', audio_codec='aac',threads=4, preset='ultrafast',  ffmpeg_params=['-crf', '23', '-pix_fmt', 'yuv420p'])
 
     return output_video_path
 

@@ -96,6 +96,7 @@ def threadsPost(quote_data):
     video_url = upload_file_to_s3()
     # Step 1: Post the reel (video)
     caption = f"✨ {quote_data['title']} ✨\n\n{quote_data['quote']}\n\n{quote_data['description']}\n\n#{' #'.join(quote_data['tags'])}\n#Inspiration #Motivation"
+    caption = caption[:490]
     response = post_reel(caption=caption, media_type=media_type, video_url=video_url, access_token=access_token,threads_account_id=threads_account_id)
     
     if response:
