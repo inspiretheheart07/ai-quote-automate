@@ -7,23 +7,13 @@ from publish.yt import initialize_upload
 from publish.fb import fbUpload
 from publish.insta import postInsta
 from publish.threads import threadsPost
-import asyncio
+from alerts.mail import sender_email
 
 DRIVE_SCOPE = ['https://www.googleapis.com/auth/drive']
 YT_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
 music_file = f"{random.randint(1, 11)}.mp3"
 files_to_download = [music_file, 'font.ttf', 'bg.png']
 
-
-async def upload_to_platforms(quote_json, video_path):
-    # Initialize all upload functions to run concurrently
-    tasks = [
-        # asyncio.gather(initialize_upload("output_video.mp4", quote_json["title"], quote_json["description"], quote_json["tags"])),
-        asyncio.gather(fbUpload(quote_json)),
-        asyncio.gather(postInsta(quote_json)),
-        asyncio.gather(threadsPost(quote_json))
-    ]
-    await asyncio.gather(*tasks)
 
 
 def run():
@@ -34,7 +24,22 @@ def run():
         if uploaded_image:
             video_path = create_video_with_music(uploaded_image, music_file)
             if video_path:
-                asyncio.run(upload_to_platforms(quote_json, video_path))
+                try:
+                    initialize_upload("output_video.mp4", quote_json["title"], quote_json["description"], quote_json["tags"])
+                except Exception as e:
+                    sender_email(None,"YT upload failed")
+                try :
+                    fbUpload(quote_json)
+                except Exception as e:
+                    sender_email(None,"Facebook Upload failed")
+                try :
+                    postInsta(quote_json)
+                except Exception as e:
+                    sender_email(None,"Instagram Upload failed")
+                try :
+                    threadsPost(quote_json)
+                except Exception as e:
+                    sender_email(None,"Threads Upload failed")
 
 if __name__ == "__main__":
     run()
