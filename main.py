@@ -7,7 +7,7 @@ from publish.yt import initialize_upload
 from publish.fb import fbUpload
 from publish.insta import postInsta
 from publish.threads import threadsPost
-from alerts.mail import sender_email
+from alerts.mail import sendMail
 
 DRIVE_SCOPE = ['https://www.googleapis.com/auth/drive']
 YT_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
@@ -27,19 +27,19 @@ def run():
                 try:
                     initialize_upload("output_video.mp4", quote_json["title"], quote_json["description"], quote_json["tags"])
                 except Exception as e:
-                    sender_email(None,"YT upload failed")
+                    sendMail(None,"YT upload failed")
                 try :
                     fbUpload(quote_json)
                 except Exception as e:
-                    sender_email(None,"Facebook Upload failed")
+                    sendMail(None,"Facebook Upload failed")
                 try :
                     postInsta(quote_json)
                 except Exception as e:
-                    sender_email(None,"Instagram Upload failed")
+                    sendMail(None,"Instagram Upload failed")
                 try :
                     threadsPost(quote_json)
                 except Exception as e:
-                    sender_email(None,"Threads Upload failed")
+                    sendMail(None,"Threads Upload failed")
 
 if __name__ == "__main__":
     run()

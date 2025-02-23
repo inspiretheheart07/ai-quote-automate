@@ -111,7 +111,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
         if total_text_height <= available_height:
             break
         
-        font_size -= 1
+        font_size -= 5
         font = ImageFont.truetype(font_path, font_size)
 
     lines = wrap_text(draw, text, font, available_width)
