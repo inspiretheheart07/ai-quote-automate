@@ -40,10 +40,25 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     font = ImageFont.truetype(font_path, font_size)
 
     lines = wrap_text(draw, text, font, available_width)
+    
+    # Dynamically adjust font size based on available height
+    def fit_text_to_height(lines, font_size):
+        while True:
+            total_text_height = sum([draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines])
+            total_text_height += (len(lines) - 1) * line_height
+            if total_text_height <= available_height:
+                break
+            font_size -= 10  # Decrease font size if the text exceeds available space
+            font = ImageFont.truetype(font_path, font_size)
+            lines = wrap_text(draw, text, font, available_width)
+        return lines, font
+
+    lines, font = fit_text_to_height(lines, font_size)
+    
     total_text_height = sum([draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines])
     total_text_height += (len(lines) - 1) * line_height
 
-    position_y = (cropped_image.height - total_text_height) // 2
+    position_y = (cropped_image.height - total_text_height) // 2 + padding_top
     position_x = padding_left
 
     for line in lines:

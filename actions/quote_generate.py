@@ -8,6 +8,7 @@ import os
 
 # Retrieve the API Key from the environment
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+GCP_PR_NAME = os.getenv('GCP_PROJECT_NAME')
 
 def genererateQuoteEnglish():
         # Check if the API key is set
@@ -18,7 +19,7 @@ def genererateQuoteEnglish():
     genai.configure(api_key=GOOGLE_API_KEY)
     
     # Generate the quote using Gemini model (specify the model name)
-    model = genai.GenerativeModel('models/gemini-pro')
+    model = genai.GenerativeModel(GCP_PR_NAME)
         
     adjectives = [
         "powerful", "inspiring", "thoughtful", "uplifting", "motivational", "wise", "heartfelt","transformative", "moving", "courageous", "resilient", "unbreakable", "hopeful", "empowering",
@@ -113,7 +114,8 @@ def genererateQuoteEnglish():
             sendMail(None,"Error: Gemini model returned an empty response : generateQuoteEnglish : 72")
             raise ValueError("Empty response from Gemini model.")
     
-        data = json.loads(response.text)
+        raw_text = response.text
+        data = json.loads(raw_text.strip('```json\n').strip('```'))
     
         # Validate the JSON data
         if isinstance(data, dict) and "quote" in data and "title" in data and "description" in data and "tags" in data and isinstance(data["tags"], list):
