@@ -56,7 +56,6 @@ def check_upload_status(creation_id, access_token, threads_account_id):
             print("Media is ready to be published.")
             return status
         else:
-            print("Media still processing...")
             return status
     else:
         print(f"Error checking upload status: {response.status_code}")
@@ -105,7 +104,6 @@ def threadsPost(quote_data):
         
         # Step 2: Check the upload status until it is ready
         while  check_upload_status(creation_id, access_token, threads_account_id) == "IN_PROGRESS" :
-            print("Waiting for media to be processed...")
             time.sleep(5)  # Wait 30 seconds before checking the status again
         if check_upload_status(creation_id, access_token, threads_account_id) == "FINISHED" :
             # Step 3: Publish the media after it's ready
