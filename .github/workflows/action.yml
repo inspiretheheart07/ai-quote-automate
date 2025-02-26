@@ -4,10 +4,14 @@ on:
   schedule:
     - cron: "30 3,9,11,15 * * *" 
     - cron: "30 2,12 * * *"
+  push:
+    branches:
+      - main  # Runs on push to the `main` branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
 
     steps:
     
