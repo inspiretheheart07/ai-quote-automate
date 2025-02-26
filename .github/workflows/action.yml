@@ -13,6 +13,13 @@ jobs:
     
     - name: Checkout code
       uses: actions/checkout@v3   
+      with:
+        fetch-depth: 0 
+      
+    - name: Ensure latest commit
+      run: |
+          git fetch --all  # Fetch all branches and commits
+          git pull origin main  # Replace `main` with your default branch if needed
 
     - name: Get System Information
       run: |
