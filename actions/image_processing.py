@@ -62,8 +62,8 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     total_text_height = sum([draw.textsize(line, font=font)[1] for line in lines])
     total_text_height += (len(lines) - 1) * line_height
 
-    # Calculate the starting position for the text
-    position_y = (cropped_image.height - total_text_height) // 2 + padding_top
+    # Calculate the starting position for the text to be vertically centered
+    position_y = (cropped_image.height - total_text_height) // 2 - (padding_bottom - padding_top) // 2 + padding_top
     position_x = padding_left
 
     # Draw text with shadow
