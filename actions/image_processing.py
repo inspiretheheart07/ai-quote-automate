@@ -6,8 +6,7 @@ def wrap_text(draw, text, font, max_width):
     current_line = ""
     for word in words:
         test_line = current_line + word + " "
-        bbox = draw.textbbox((0, 0), test_line, font=font)
-        text_width = bbox[2] - bbox[0]
+        text_width, _ = draw.textsize(test_line, font=font)
         if text_width <= max_width:
             current_line = test_line
         else:
@@ -22,6 +21,8 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     image = Image.open(background_image_path)
     image = image.convert('RGB')
     image_width, image_height = image.size
+
+    # Crop the image to the required region
     left = (image_width - 1080) // 2
     top = (image_height - 1920) // 2
     right = (image_width + 1080) // 2
@@ -39,12 +40,13 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     font_size = 150
     font = ImageFont.truetype(font_path, font_size)
 
+    # Wrap the text into lines based on available width
     lines = wrap_text(draw, text, font, available_width)
-    
+
     # Dynamically adjust font size based on available height
-    def fit_text_to_height(lines, font_size):
+    def fit_text_to_height(lines, font, font_size):
         while True:
-            total_text_height = sum([draw.textbbox((0, 0), line, font=font_size)[3] - draw.textbbox((0, 0), line, font=font_size)[1] for line in lines])
+            total_text_height = sum([draw.textsize(line, font=font)[1] for line in lines])
             total_text_height += (len(lines) - 1) * line_height
             if total_text_height <= available_height:
                 break
@@ -53,23 +55,27 @@ def text_on_background(text, background_image_path, font_path, output_image_path
             lines = wrap_text(draw, text, font, available_width)
         return lines, font
 
-    lines, font = fit_text_to_height(lines, font_size)
+    # Adjust font size
+    lines, font = fit_text_to_height(lines, font, font_size)
     
-    total_text_height = sum([draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines])
+    # Calculate total text height after adjustment
+    total_text_height = sum([draw.textsize(line, font=font)[1] for line in lines])
     total_text_height += (len(lines) - 1) * line_height
 
+    # Calculate the starting position for the text
     position_y = (cropped_image.height - total_text_height) // 2 + padding_top
     position_x = padding_left
 
+    # Draw text with shadow
     for line in lines:
-        bbox = draw.textbbox((0, 0), line, font=font)
-        text_width = bbox[2] - bbox[0]
+        text_width, text_height = draw.textsize(line, font=font)
         position_x = (cropped_image.width - text_width) // 2
         shadow_position = (position_x + shadow_offset[0], position_y + shadow_offset[1])
         draw.text(shadow_position, line, fill=(50, 50, 50), font=font)
         draw.text((position_x, position_y), line, fill=(255, 255, 255), font=font)
-        position_y += draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] + line_height
+        position_y += text_height + line_height
 
+    # Apply sharpening filter and save the output
     sharpened_image = cropped_image.filter(ImageFilter.SHARPEN)
     sharpened_image.save(output_image_path, 'PNG')
     return output_image_path

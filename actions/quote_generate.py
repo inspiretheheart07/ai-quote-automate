@@ -107,10 +107,8 @@ def genererateQuoteEnglish():
             max_output_tokens=800,
             temperature=0.8
         ))
-        print("Raw Response:", response)
         if not response.text:
             print("Error: Gemini model returned an empty response.")
-            print("Raw Response:", response)
             sendMail(None,"Error: Gemini model returned an empty response : generateQuoteEnglish : 72")
             raise ValueError("Empty response from Gemini model.")
     
