@@ -44,7 +44,7 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     # Dynamically adjust font size based on available height
     def fit_text_to_height(lines, font_size):
         while True:
-            total_text_height = sum([draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines])
+            total_text_height = sum([draw.textbbox((0, 0), line, font=font_size)[3] - draw.textbbox((0, 0), line, font=font_size)[1] for line in lines])
             total_text_height += (len(lines) - 1) * line_height
             if total_text_height <= available_height:
                 break
