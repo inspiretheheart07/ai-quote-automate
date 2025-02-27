@@ -27,18 +27,22 @@ def run():
                 try:
                     initialize_upload("output_video.mp4", quote_json["title"], quote_json["description"], quote_json["tags"])
                 except Exception as e:
+                    print(e)
                     sendMail(None,"YT upload failed")
                 try :
                     fbUpload(quote_json)
                 except Exception as e:
+                    print(e)
                     sendMail(None,"Facebook Upload failed")
                 try :
                     postInsta(quote_json)
                 except Exception as e:
+                    print(e)
                     sendMail(None,"Instagram Upload failed")
                 try :
                     threadsPost(quote_json)
                 except Exception as e:
+                    print(e)
                     sendMail(None,"Threads Upload failed")
 
 if __name__ == "__main__":
