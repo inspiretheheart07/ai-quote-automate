@@ -101,6 +101,10 @@ def genererateQuoteEnglish():
 
     Also, generate a title that captures the essence of the quote, a short description of the meaning behind the quote, and a list of relevant tags.
 
+
+    Ensure the tags are optimized for SEO, incorporating common search terms related to {random_theme} , {random_adjective}, personal development, motivation, leadership, resilience, success, overcoming obstacles, etc.
+
+
     Use the following JSON schema:
     {{
         "quote": "A new and unique inspiring, wise,heart break, betrayal, revenge, karma, comeback, heart-touching quote from a diffent authors. (string)",
