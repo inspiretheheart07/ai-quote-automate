@@ -53,6 +53,8 @@ def text_on_background(text, background_image_path, font_path, output_image_path
             font_size -= 10  # Decrease font size if the text exceeds available space
             font = ImageFont.truetype(font_path, font_size)
             lines = wrap_text(draw, text, font, available_width)
+            if font_size <= 50:  # Prevent the font size from getting too small
+                break
         return lines, font
 
     # Adjust font size
@@ -62,8 +64,8 @@ def text_on_background(text, background_image_path, font_path, output_image_path
     total_text_height = sum([draw.textsize(line, font=font)[1] for line in lines])
     total_text_height += (len(lines) - 1) * line_height
 
-    # Calculate the starting position for the text to be vertically centered
-    position_y = (cropped_image.height - total_text_height) // 2 - (padding_bottom - padding_top) // 2 + padding_top
+    # Adjust vertical positioning
+    position_y = (cropped_image.height - total_text_height) // 2
     position_x = padding_left
 
     # Draw text with shadow
