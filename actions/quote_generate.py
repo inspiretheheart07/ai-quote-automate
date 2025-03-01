@@ -128,7 +128,11 @@ def genererateQuoteEnglish():
     try:
         response = model.generate_content(prompt, generation_config=types.GenerationConfig(
             max_output_tokens=800,
-            temperature=0.8
+            temperature=0.9,
+            top_p=0.95,
+            top_k=500,
+            candidate_count=1,
+            seed=None,              
         ))
         if not response.text:
             print("Error: Gemini model returned an empty response.")
