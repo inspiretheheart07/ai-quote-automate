@@ -131,8 +131,7 @@ def genererateQuoteEnglish():
             temperature=0.9,
             top_p=0.95,
             top_k=500,
-            candidate_count=1,
-            seed=None,              
+            candidate_count=1, 
         ))
         if not response.text:
             print("Error: Gemini model returned an empty response.")
