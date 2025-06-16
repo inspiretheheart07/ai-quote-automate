@@ -95,11 +95,11 @@ def genererateQuoteEnglish():
     random_theme = random.choice(theme)
     
     prompt = f"""
-    Generate a completely new, original, and unique inspirational proverb. The proverb should be wise, motivating, and uplifting. Ensure the proverb is not well-known or famous, and it should sound like something a thought leader or philosopher might say. The proverb should be attributed to a well-known author, philosopher, or thought leader. The name of the author should be included in the proverb.
+    Generate a completely new, original, and unique inspirational thought for the day. The thought for the day should be wise, motivating, and uplifting. Ensure the thought for the day is not well-known or famous, and it should sound like something a thought leader or philosopher might say. The thought for the day should be attributed to a well-known author, philosopher, or thought leader. The name of the author should be included in the thought for the day.
 
-    The proverb should focus on the theme of {random_theme}. The proverb should feel {random_adjective}, impactful, and inspiring. Do not limit the proverb to just one specific theme—make it broad and relatable to a wider audience.
+    The thought for the day should focus on the theme of {random_theme}. The thought for the day should feel {random_adjective}, impactful, and inspiring. Do not limit the thought for the day to just one specific theme—make it broad and relatable to a wider audience.
 
-    Also, generate a title that captures the essence of the proverb, a short description of the meaning behind the proverb, and a list of relevant tags.
+    Also, generate a title that captures the essence of the thought for the day, a short description of the meaning behind the thought for the day, and a list of relevant tags.
 
 
     Ensure the tags are optimized for SEO, incorporating common search terms related to {random_theme} , {random_adjective}, personal development, motivation, leadership, resilience, success, overcoming obstacles, etc.
@@ -107,9 +107,9 @@ def genererateQuoteEnglish():
 
     Use the following JSON schema:
     {{
-        "quote": "A new and unique inspiring, wise,heart break, betrayal, revenge, karma, comeback, heart-touching proverb from a diffent authors. (string)",
-        "title": "A short title that captures the essence of the proverb with 90 charcaters or 90 tokens which ever less. (string)",
-        "description": "A brief description explaining the meaning of the proverb. (string)",
+        "quote": "A new and unique inspiring, wise,heart break, betrayal, revenge, karma, comeback, heart-touching thought for the day from a diffent authors. (string)",
+        "title": "A short title that captures the essence of the thought for the day with 90 charcaters or 90 tokens which ever less. (string)",
+        "description": "A brief description explaining the meaning of the thought for the day. (string)",
         "tags": ["A list of 10-25 relevant tags. (array of strings)"]
     }}
     
@@ -118,11 +118,11 @@ def genererateQuoteEnglish():
     {{
         "quote": "The only way to do great work is to love what you do. - Steve Jobs",
         "title": "Passion for Work",
-        "description": "This proverb emphasizes the importance of finding passion in your work. It suggests that genuine fulfillment and excellence come from pursuing what you truly love.",
+        "description": "This thought for the day emphasizes the importance of finding passion in your work. It suggests that genuine fulfillment and excellence come from pursuing what you truly love.",
         "tags": ["passion", "work", "motivation", "inspiration", "success"]
     }}
     
-    Return only the JSON object. Do not include any extra text. Generate a new and unique proverb each time.
+    Return only the JSON object. Do not include any extra text. Generate a new and unique thought for the day each time.
     """
     
     try:
