@@ -1,143 +1,142 @@
 name: Python CI
 
 on:
-  schedule:    
+  schedule:
     - cron: "30 2,4,6,8,10,12,14,16 * * *"
-    
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    
 
     steps:
-    
-    - name: Checkout code
-      uses: actions/checkout@v3   
-      with:
-        fetch-depth: 0 
-      
-    - name: Ensure latest commit
-      run: |
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Ensure latest commit
+        run: |
           git fetch --all  # Fetch all branches and commits
           git pull origin main  # Replace `main` with your default branch if needed
 
-    - name: Get System Information
-      run: |
-        echo "Operating System and Architecture Information:"
-        uname -a  # Print full system information
-        echo "OS Version Details:"
-        cat /etc/os-release  # Print OS release information
-        echo "CPU Architecture:"
-        lscpu  # Print CPU architecture details
-        echo "Memory Information:"
-        free -h  # Print memory details
-        echo "Disk Space Information:"
-        df -h  # Print disk space information
-        echo "Environment Variables:"
-        printenv  # Print all environment variables
-        echo "Available CPUs:"
-        nproc  # Number of available CPU cores
+      - name: Get System Information
+        run: |
+          echo "Operating System and Architecture Information:"
+          uname -a  # Print full system information
+          echo "OS Version Details:"
+          cat /etc/os-release  # Print OS release information
+          echo "CPU Architecture:"
+          lscpu  # Print CPU architecture details
+          echo "Memory Information:"
+          free -h  # Print memory details
+          echo "Disk Space Information:"
+          df -h  # Print disk space information
+          echo "Environment Variables:"
+          printenv  # Print all environment variables
+          echo "Available CPUs:"
+          nproc  # Number of available CPU cores
 
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v5
-      with:
-        python-version: 3.9
-    
-    - name: Install FFmpeg
-      run: sudo apt-get install -y ffmpeg
-  
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -U google-generativeai
-        
-    - name: Format and save client_secrets.json
-      run: |
+      - name: Update package lists
+        run: sudo apt-get update
+
+      - name: Install FFmpeg
+        run: sudo apt-get install -y --fix-missing ffmpeg
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -U google-generativeai
+
+      - name: Format and save client_secrets.json
+        run: |
           python -c "
           import json
           import os
-      
+
           # Load the client secrets from the GitHub secret (stored in JSON_OAUTH)
           client_secrets = os.getenv('JSON_OAUTH')
-          
+
           # Debugging: Check if client_secrets is set
           if client_secrets is None:
               print('Error: JSON_OAUTH environment variable is not set.')
               exit(1)
-      
-          
-      
+
+
+
           # Parse the secret into a JSON object
           client_secrets_dict = json.loads(client_secrets)
-      
+
           # Re-encode the JSON object with double quotes
           with open('client_secrets.json', 'w') as f:
               json.dump(client_secrets_dict, f, indent=2)
-      
+
           print('client_secrets.json successfully written')"
-      env:
-          JSON_OAUTH: ${{ secrets.JSON_OAUTH }}  # Pass the secret here
-      
-    
-    - name: Format and save oauth.json
-      run: |
-        python -c "
-        import json
-        import os
+        env:
+          JSON_OAUTH: ${{ secrets.JSON_OAUTH }} # Pass the secret here
 
-        # Load the client secrets from the GitHub secret (stored in JSON_OAUTH_MAIN)
-        client_secrets = os.getenv('JSON_OAUTH_MAIN')
-        
-        # Debugging: Check if client_secrets is set
-        
-        
-        if not client_secrets:
-            exit('Error: JSON_OAUTH_MAIN is not set.')
+      - name: Format and save oauth.json
+        run: |
+          python -c "
+          import json
+          import os
 
-        # Parse the secret into a JSON object
-        client_secrets_dict = json.loads(client_secrets)
+          # Load the client secrets from the GitHub secret (stored in JSON_OAUTH_MAIN)
+          client_secrets = os.getenv('JSON_OAUTH_MAIN')
 
-        # Re-encode the JSON object with double quotes
-        with open('oauth.json', 'w') as f:
-            json.dump(client_secrets_dict, f, indent=2)
+          # Debugging: Check if client_secrets is set
 
-        print('oauth.json successfully written')"
-      env:
-          JSON_OAUTH_MAIN: ${{ secrets.JSON_OAUTH_MAIN }}  # Pass the secret here
 
-    - name: Run script
-      env:
-        JSON_OAUTH_MAIN: ${{ secrets.JSON_OAUTH_MAIN }}  # Pass the secret here
-        GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
-        GOOGLE_YT_API_KEY: ${{ secrets.GOOGLE_YT_API_KEY }}
-        FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }} 
-        FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }} 
-        FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }} 
-        FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }} 
-        FACEBOOK_API_VERSION: ${{ secrets.FACEBOOK_API_VERSION }}
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-        GCP_PROJECT_NAME: ${{ secrets.GCP_PROJECT_NAME }}
-        GCP_WORKLOAD_IDENTITY_POOL : ${{ secrets.GCP_WORKLOAD_IDENTITY_POOL }}
-        GCP_WORKLOAD_IDENTITY_PROVIDER : ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        GOOGLE_API_KEY : ${{ secrets.GOOGLE_API_KEY }}
-        GOOGLE_API_KEY_DRIVE : ${{ secrets.GOOGLE_API_KEY_DRIVE }}
-        INSTA_PAGE_ID : ${{ secrets.INSTA_PAGE_ID }}
-        JSON_OAUTH : ${{ secrets.JSON_OAUTH }}
-        GOOGLE_CREDENTIALS : ${{ secrets.GOOGLE_CREDENTIALS }}
-        THREADS_PAGE_ID : ${{ secrets.THREADS_PAGE_ID }}
-        THREADS_TOKEN : ${{ secrets.THREADS_TOKEN }}
-        THREAD_VERSION : ${{ secrets.THREAD_VERSION }}
-        GPASS: ${{ secrets.GPASS }}
-        MAIL: ${{ secrets.MAIL }}
-        SERVICE_ACCOUNT_EMAIL : ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-        AWS_ACCESS_KEY_ID : ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_DEFAULT_BUCKET : ${{ secrets.AWS_DEFAULT_BUCKET }}
-        AWS_DEFAULT_REGION : ${{ secrets.AWS_DEFAULT_REGION }}
-        AWS_FILE_S3_UPLOAD : ${{ secrets.AWS_FILE_S3_UPLOAD }}
-        AWS_SECRET_ACCESS_KEY : ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
-        python main.py
+          if not client_secrets:
+              exit('Error: JSON_OAUTH_MAIN is not set.')
+
+          # Parse the secret into a JSON object
+          client_secrets_dict = json.loads(client_secrets)
+
+          # Re-encode the JSON object with double quotes
+          with open('oauth.json', 'w') as f:
+              json.dump(client_secrets_dict, f, indent=2)
+
+          print('oauth.json successfully written')"
+        env:
+          JSON_OAUTH_MAIN: ${{ secrets.JSON_OAUTH_MAIN }} # Pass the secret here
+
+      - name: Run script
+        env:
+          JSON_OAUTH_MAIN: ${{ secrets.JSON_OAUTH_MAIN }} # Pass the secret here
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GOOGLE_YT_API_KEY: ${{ secrets.GOOGLE_YT_API_KEY }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          FACEBOOK_API_VERSION: ${{ secrets.FACEBOOK_API_VERSION }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_PROJECT_NAME: ${{ secrets.GCP_PROJECT_NAME }}
+          GCP_WORKLOAD_IDENTITY_POOL: ${{ secrets.GCP_WORKLOAD_IDENTITY_POOL }}
+          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_API_KEY_DRIVE: ${{ secrets.GOOGLE_API_KEY_DRIVE }}
+          INSTA_PAGE_ID: ${{ secrets.INSTA_PAGE_ID }}
+          JSON_OAUTH: ${{ secrets.JSON_OAUTH }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          THREADS_PAGE_ID: ${{ secrets.THREADS_PAGE_ID }}
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+          THREAD_VERSION: ${{ secrets.THREAD_VERSION }}
+          GPASS: ${{ secrets.GPASS }}
+          MAIL: ${{ secrets.MAIL }}
+          SERVICE_ACCOUNT_EMAIL: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_DEFAULT_BUCKET: ${{ secrets.AWS_DEFAULT_BUCKET }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          AWS_FILE_S3_UPLOAD: ${{ secrets.AWS_FILE_S3_UPLOAD }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          python main.py
