@@ -1,6 +1,9 @@
 name: Python CI
 
 on:
+  push:
+    branches:
+      - main  # Or your default bran
   schedule:
     - cron: "30 2,4,6,8,10,12,14,16 * * *"
 
