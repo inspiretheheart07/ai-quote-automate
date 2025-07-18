@@ -95,14 +95,17 @@ def genererateQuoteEnglish():
     random_theme = random.choice(theme)
     
     prompt = f"""
-    Generate a completely new, original, and unique inspirational thought for the day. The thought for the day should be wise, motivating, and uplifting. Ensure the thought for the day is not well-known or famous, and it should sound like something a thought leader or philosopher might say. The thought for the day should be attributed to a well-known author, philosopher, or thought leader. The name of the author should be included in the thought for the day.
+    Generate an inspirational thought of the day in language {language}. The thought should be wise, motivating, and uplifting, and sound like something a thought leader or philosopher might say. It may be original or adapted from lesser-known works, but should not be famous or widely recognized. Attribute the thought to a real and notable author, philosopher, or thought leader, using their full name.
 
-    The thought for the day should focus on the theme of {random_theme}. The thought for the day should feel {random_adjective}, impactful, and inspiring. Do not limit the thought for the day to just one specific theme—make it broad and relatable to a wider audience.
-
-    Also, generate a title that captures the essence of the thought for the day, a short description of the meaning behind the thought for the day, and a list of relevant tags.
-
-
-    Ensure the tags are optimized for SEO, incorporating common search terms related to {random_theme} , {random_adjective}, personal development, motivation, leadership, resilience, success, overcoming obstacles, etc.
+    The thought should be inspired by the theme: {random_theme}, and should feel {random_adjective}, impactful, and inspiring. Make the message broad and relatable for a wide audience, not narrowly focused.
+    
+    Also include:
+    
+    A concise, memorable title capturing the essence of the thought.
+    
+    A short, insightful description explaining its meaning and relevance.
+    
+    A list of 10–25 diverse, relevant, single-word, lowercase tags related to the thought.
 
 
     Use the following JSON schema:
