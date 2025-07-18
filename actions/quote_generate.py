@@ -97,6 +97,8 @@ def genererateQuoteEnglish():
     prompt = f"""
     Generate an inspirational thought of the day in language {language}. The thought should be wise, motivating, and uplifting, and sound like something a thought leader or philosopher might say. It may be original or adapted from lesser-known works, but should not be famous or widely recognized. Attribute the thought to a real and notable author, philosopher, or thought leader, using their full name.
 
+    **Exclude any content that references religion, religious beliefs, religious figures, religious symbols, or religious texts. Exclude any content that references politics, political ideologies, politicians, governments, political parties, political events, or political symbols. Ensure all language, thoughts, titles, descriptions, and tags are entirely secular and non-political.**
+
     The thought should be inspired by the theme: {random_theme}, and should feel {random_adjective}, impactful, and inspiring. Make the message broad and relatable for a wide audience, not narrowly focused.
     
     Also include:
